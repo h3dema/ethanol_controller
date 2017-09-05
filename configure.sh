@@ -1,8 +1,7 @@
-MY_PATH="/home/ethanol/ethanol_controller/"
-cd $MY_PATH
+MY_PATH=`pwd`
 
 # update modules
 git submodule update --remote --init
 
 # create link
-ln -s $MY_PATH/ethanol $MY_PATH/pox/pox/ethanol
+ln -s "$MY_PATH/ethanol" "$MY_PATH/pox/pox/ethanol"
