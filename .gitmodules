@@ -1,0 +1,7 @@
+[submodule "pox"]
+	path = pox
+	url = https://github.com/noxrepo/pox.git
+        branch = dart
+[submodule "ethanol/graph_coloring"]
+	path = ethanol/graph_coloring
+	url = https://github.com/h3dema/graph_coloring.git
