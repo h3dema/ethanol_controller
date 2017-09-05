@@ -19,6 +19,6 @@
 # make install
 # make installdocs
 
-epydoc --debug --pdf  --graph all *
+epydoc --pdf  --graph all *
 cd ./documentation
 rm -f *.aux *.tex *.ps *.toc *.ind *.dvi *.idx *.out *.ilg *.log
