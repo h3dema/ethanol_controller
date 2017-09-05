@@ -10,3 +10,8 @@ git clone https://github.com/h3dema/ethanol_devel.git
 cd ethanol_devel
 git submodule update --remote
 ```
+
+
+# More info #
+
+See more information in ethanol/ssl_message/README.MD.
