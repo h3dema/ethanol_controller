@@ -1,7 +1,9 @@
 # Dependencies #
 
 Our preferred development environment in Ubuntu 14.04 LTS.
-We didn't test it in another linux. We recommend using our docker container (see [Ethanol Development container](https://github.com/h3dema/ethanol_devel))
+We didn't test it in another linux. We recommend using our docker container (see [Ethanol Development container](https://github.com/h3dema/ethanol_devel)).
+If you use the container all downloading and configure is made by the docker build process.
+
 Some python modules are needed to run ethanol.
 To install them.
 
