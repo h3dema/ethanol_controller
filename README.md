@@ -1,7 +1,7 @@
 # Ethanol controller
 This repository contains the Ethanol controller. It is in Python 2. 7, and runs as a POX (dart) module.
 
-We have developed a docker container that allows the compilation and development of ethanol agents. This is the method we recommend for you to compile (and change) Ethanol. The container already makes the clone of this repository (ethanol_controller). To see more only this container go to [ethanol_devel](https://github.com/h3dema/ethanol_devel).
+We have developed a docker container that allows the compilation and development of ethanol agents. This is the method we recommend for you to compile (and change) Ethanol. The container already makes the clone of this repository (ethanol_controller). To see more go to [ethanol_devel](https://github.com/h3dema/ethanol_devel).
 
 # Installation #
 
