@@ -35,6 +35,8 @@ cd pox
 ./pox.py forwarding.l2_learning ethanol.server
 ```
 
+To run the Ethanol module you need the SSL certificate. You can create your own or use ours. Our certificate is in the ethanol hostapd repository. Go to [its certificate directory](https://github.com/h3dema/ethanol_hostapd/tree/master/certificate) to see the file.
+
 Ethanol controller by its own does nothing, only receives Hello messages from clients (APs).
 
 # More info #
