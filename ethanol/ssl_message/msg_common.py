@@ -16,6 +16,7 @@ import ssl
 from socket import socket, AF_INET, SOCK_STREAM
 
 from pox.ethanol.ssl_message.enum import Enum
+from pox.ethanol.ssl_message.msg_error import get_error_msg
 
 
 # #####################################
@@ -23,7 +24,7 @@ from pox.ethanol.ssl_message.enum import Enum
 # message version
 #
 # #####################################
-VERSION = "1.0.3" #: ethanol version
+VERSION = "1.0.3"  #: ethanol version
 
 # #####################################
 #
@@ -34,7 +35,7 @@ VERSION = "1.0.3" #: ethanol version
 MSG_TYPE = Enum(
   'MSG_HELLO_TYPE',
   'MSG_BYE_TYPE',
-  #// tipo das mensagens de erro
+  # // tipo das mensagens de erro
   'MSG_ERR_TYPE',
   # ping
   'MSG_PING',
@@ -171,6 +172,9 @@ MSG_TYPE = Enum(
   'MSG_MEAN_STA_STATISTICS_SET_ALPHA',
   'MSG_MEAN_STA_STATISTICS_SET_TIME',
   'MSG_CHANGED_AP',
+  'MSG_TOS_CLEANALL',
+  'MSG_TOS_ADD',
+  'MSG_TOS_REPLACE',
 )
 """ contains all constants used as message type"""
 
@@ -195,39 +199,40 @@ BUFFER_SIZE = 65536
 """ size of the buffer used by the python socket"""
 
 
-MSG_ERROR_TYPE = Enum(
-  'ERROR_UNKNOWN',
-  'ERROR_VERSION_MISMATCH',
-  'ERROR_PROCESS_NOT_IMPLEMENTED_FOR_THIS_MESSAGE',
-  'ERROR_MSG_WITHOUT_TYPE',
-  'ERROR_FIELD_NOT_FOUND',
-  'ERROR_INTERFACE_NOT_FOUND',
-)
+MSG_ERROR_TYPE = Enum('ERROR_UNKNOWN',
+                      'ERROR_VERSION_MISMATCH',
+                      'ERROR_PROCESS_NOT_IMPLEMENTED_FOR_THIS_MESSAGE',
+                      'ERROR_MSG_WITHOUT_TYPE',
+                      'ERROR_FIELD_NOT_FOUND',
+                      'ERROR_INTERFACE_NOT_FOUND',
+                      )
 """constantes usadas para definição de erro de mensagens usadas no campo error_type in msg_error.py
 """
 
 DEFAULT_WIFI_INTFNAME = 'wlan0'
 
+
 def hex(s):
-  """
-    converts a string of bytes to a string of hexa
-  """
-  return ":".join("{:02x}".format(ord(c)) for c in s)
+    """
+      converts a string of bytes to a string of hexa
+    """
+    return ":".join("{:02x}".format(ord(c)) for c in s)
+
 
 def connect_ssl_socket(server):
-  """ creates a ssl socket to server
-      @param server: is a tuple (ip, port)
-  """
-  # print 'Socket -->: Requerendo um socket '
-  sckt = socket(AF_INET, SOCK_STREAM)
-  ssl_sock = ssl.wrap_socket(sckt) #, cert_reqs=ssl.CERT_REQUIRED)
-  # print 'Socket -->: conectando '
-  try:
-    conn = ssl_sock.connect(server)
-  except:
-    return -1
-  # print 'Socket -->: conexao estabelecida '
-  return ssl_sock
+    """ creates a ssl socket to server
+        @param server: is a tuple (ip, port)
+    """
+    # print 'Socket -->: Requerendo um socket '
+    sckt = socket(AF_INET, SOCK_STREAM)
+    ssl_sock = ssl.wrap_socket(sckt)  # , cert_reqs=ssl.CERT_REQUIRED)
+    # print 'Socket -->: conectando '
+    try:
+       conn = ssl_sock.connect(server)
+    except:
+        return -1
+    # print 'Socket -->: conexao estabelecida '
+    return ssl_sock
 
 
 """ exemplo de uma mensagem MSG_TYPE.MSG_GET_AP_SSID
@@ -248,44 +253,44 @@ def connect_ssl_socket(server):
 """
 
 
-def send_and_receive_msg(server, msg_struct, builder, parser, only_send = False):
-  """ generic function to send and receive message
+def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
+    """ generic function to send and receive message
 
-      @param server: (serverIp, serverPort)
-      @param msg_struct: Container with message fields
-      @param builder: Struct.build
-      @param parser: Struc.parse
-      this Struct class must be able to interpret Cointainer fields
+        @param server: (serverIp, serverPort)
+        @param msg_struct: Container with message fields
+        @param builder: Struct.build
+        @param parser: Struc.parse
+        this Struct class must be able to interpret Cointainer fields
 
-      @return:
-      error : false if something goes wrong
-      msg : a Container with the message
-  """
-  msg = builder(msg_struct)
-  ssl_sock = connect_ssl_socket(server)
-  if ssl_sock == -1:
-    # error
-    return True, None
+        @return:
+        error : false if something goes wrong
+        msg : a Container with the message
+    """
+    msg = builder(msg_struct)
+    ssl_sock = connect_ssl_socket(server)
+    if ssl_sock == -1:
+        # error
+        return True, None
 
-  num_bytes=ssl_sock.write(msg)
-  if only_send:
+    num_bytes = ssl_sock.write(msg)
+    if only_send:
+        ssl_sock.close()
+        # in this case, just return
+        # no return parameters
+        return
+
+    received_msg = ssl_sock.read(BUFFER_SIZE)
     ssl_sock.close()
-    # in this case, just return
-    # no return parameters
-    return
+    if received_msg != '':
+        from pox.ethanol.ssl_message.msg_error import is_error_msg
 
-  received_msg=ssl_sock.read(BUFFER_SIZE)
-  ssl_sock.close()
-  if received_msg != '':
-    from pox.ethanol.ssl_message.msg_error import is_error_msg
-
-    if is_error_msg(received_msg):
-      msg = get_error_msg(received_msg)
-      return True, msg
+        if is_error_msg(received_msg):
+            msg = get_error_msg(received_msg)
+            return True, msg
+        else:
+            msg = parser(received_msg)
+            # error
+            return False, msg
     else:
-      msg = parser(received_msg)
-      # error
-      return False, msg
-  else:
-    return True, None
+        return True, None
 

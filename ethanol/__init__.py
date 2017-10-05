@@ -20,7 +20,7 @@ This package contains some components to implement Ethanol API.
 ethanol should run as a pox module
 
 sample command call:
-  python ./pox.py forwarding.l2_learning ethanol.server 
+    python ./pox.py forwarding.l2_learning ethanol.server
 
 ethanol.server is the ~/ethanol/python/server.py file
 
@@ -30,4 +30,3 @@ ln ~/ethanol/python ethanol
 
 
 """
-
