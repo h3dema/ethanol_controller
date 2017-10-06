@@ -17,6 +17,10 @@ bash configure.sh
 
 Read [ethanol/README.MD](https://github.com/h3dema/ethanol_controller/blob/master/ethanol/README.MD)
 
+# Template #
+
+Inside **template** directory, you find a sample file, showing how to create a simple module in python that uses Ethanol's resources.
+
 # More info #
 
 See more information in [ethanol/ssl_message/README.MD.](https://github.com/h3dema/ethanol_controller/blob/master/ethanol/ssl_message/README.MD)
