@@ -1,17 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-'''	This is a pox module. It should by called using pox.py.
+'''
+    For TESTING purpose only.
+    Don't use it as a template to your code.
+    This module uses construct (https://pypi.python.org/pypi/construct)
+    See more info at msg_core.py on how to install it.
 
-  Command sample:
+    We use this module to test ethanol messages. It does not use Ethanol architecture, only its messages.
+    We must import the correct message module, and place its call in launch()
 
-  ./pox.py ethanol.client_test --server_address='thunder' --server_port=22223
+    This is a pox module. It should by called using pox.py.
+
+    Command sample:
+
+    cd pox
+    ./pox.py ethanol.client_test --server_address='thunder' --server_port=22223
 
 
-  This module uses construct (https://pypi.python.org/pypi/construct)
-	See more info at msg_core.py to install it
-
-  We use this module to test ethanol messages
-  We must import the correct message module, and place its call in launch()
 '''
 from threading import Thread
 
