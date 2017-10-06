@@ -30,7 +30,7 @@ from construct.debug import Probe
 from pox.ethanol.ssl_message.msg_core   import msg_default
 from pox.ethanol.ssl_message.msg_core   import field_mac_addr, field_ssid, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
 
 
 ap_in_range = Struct('ap_in_range',
@@ -95,6 +95,9 @@ def get_ap_in_range(server, id=0, intf_name=None, sta_ip = None, sta_port = 0):
   if not error:
     num_aps = msg['num_aps'] if 'num_aps' in msg else 0
     aps = msg['ap_in_range'] if 'ap_in_range' in msg else []
+    for ap in aps:
+      value = tri_boolean('is_dBm', ap)
+      ap['is_dBm'] = value
   else:
     num_aps = 0
     aps = []

@@ -46,7 +46,7 @@ def add_station(client_address):
 
     if ip not in list_of_stations:
         log.info("Starting Station object with IP %s", ip)
-        msg, intfs = get_interfaces(server=client_address, id=0)
+        msg, intfs = get_interfaces(server=client_address, m_id=0)
         ''' select only wireless interfaces '''
         intfs = [intf.intf_name for intf in intfs if intf.is_wifi is True]
         log.info("Found %d wireless interface in the device: %s", len(intfs), ",".join(intfs))

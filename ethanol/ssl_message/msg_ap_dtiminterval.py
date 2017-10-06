@@ -27,19 +27,20 @@ from construct import SLInt32
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, BooleanFlag
-from pox.ethanol.ssl_message.msg_core   import field_intf_name, field_ssid
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_dtiminterval = Struct('msg_ap_dtiminterval',
-              Embed(msg_default),   # default fields
-              Embed(field_intf_name),
-              SLInt32('dtim_interval'),                    
-              #Probe()
-          )
+                             Embed(msg_default),   # default fields
+                             Embed(field_intf_name),
+                             SLInt32('dtim_interval'),
+                             # Probe()
+                             )
+
 
 def get_ap_dtiminterval(server, id=0, intf_name=None):
   """ get the DTIM interval set in the interface intf_name

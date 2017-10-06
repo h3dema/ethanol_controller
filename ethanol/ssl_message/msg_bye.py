@@ -13,16 +13,14 @@
 
 @requires: construct 2.5.2
 """
-from datetime import datetime
 from construct import SLInt32
 from construct import Embed
 from construct import Struct
 from construct import Container
 
 from pox.ethanol.ssl_message.msg_core import msg_default
-from pox.ethanol.ssl_message.msg_error import is_error_msg, get_error_msg
-from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, BUFFER_SIZE
-from pox.ethanol.ssl_message.msg_common import hex, connect_ssl_socket
+from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
+from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
 
 from pox.ethanol.events import Events
 events_bye = Events()

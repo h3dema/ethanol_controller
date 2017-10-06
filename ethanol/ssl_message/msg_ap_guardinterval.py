@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-implements the following messages: 
+implements the following messages:
 
 * get_ap_guardinterval
 
@@ -14,7 +14,7 @@ no process is implemented: the controller is not supposed to respond to these me
 @organization: WINET/DCC/UFMG
 @copyright: h3dema (c) 2017
 @contact: henriquemoura@hotmail.com
-@licence: GNU General Public License v2.0 
+@licence: GNU General Public License v2.0
 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 @since: July 2015
 @status: in development
@@ -27,19 +27,20 @@ from construct import SLInt64
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, BooleanFlag
-from pox.ethanol.ssl_message.msg_core   import field_intf_name, field_ssid
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_guardinterval = Struct('msg_ap_guardinterval',
-              Embed(msg_default),   # default fields
-              Embed(field_intf_name),
-              SLInt64('guard_interval'),                    
-              #Probe()
-          )
+                              Embed(msg_default),   # default fields
+                              Embed(field_intf_name),
+                              SLInt64('guard_interval'),
+                              # Probe()
+                              )
+
 
 def get_ap_guardinterval(server, id=0, intf_name=None):
   """ get the guard interval set in the interface intf_name
@@ -56,7 +57,7 @@ def get_ap_guardinterval(server, id=0, intf_name=None):
 
   #1) create message
   msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_GET_AP_GUARDINTERVAL, 
+                  m_type = MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
                   m_id = id,
                   p_version_length=len(VERSION),
                   p_version = VERSION,
@@ -87,7 +88,7 @@ def set_ap_guardinterval(server, id=0, intf_name=None, guard_interval=100):
 
   #1) create message
   msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_SET_AP_GUARDINTERVAL, 
+                  m_type = MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
                   m_id = id,
                   p_version_length=len(VERSION),
                   p_version = VERSION,

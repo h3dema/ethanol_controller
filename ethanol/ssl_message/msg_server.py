@@ -17,75 +17,75 @@
 @requires: construct 2.5.2
 """
 from threading import Thread
-import socket, ssl
+import socket
+import ssl
 import os
 import sys
 
-from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, SERVER_PORT
-from pox.ethanol.ssl_message.msg_hello  import process_hello
-from pox.ethanol.ssl_message.msg_bye    import process_bye
-from pox.ethanol.ssl_message.msg_ping   import process_msg_ping
-from pox.ethanol.ssl_message.msg_error  import return_error_msg_struct
-from pox.ethanol.ssl_message.msg_core   import decode_default_fields 
-from pox.ethanol.ssl_message.msg_error  import process_msg_not_implemented
+from pox.ethanol.ssl_message.msg_common import MSG_TYPE, SERVER_PORT
+from pox.ethanol.ssl_message.msg_hello import process_hello
+from pox.ethanol.ssl_message.msg_bye import process_bye
+from pox.ethanol.ssl_message.msg_ping import process_msg_ping
+from pox.ethanol.ssl_message.msg_error import return_error_msg_struct
+from pox.ethanol.ssl_message.msg_core import decode_default_fields
+from pox.ethanol.ssl_message.msg_error import process_msg_not_implemented
 from pox.ethanol.ssl_message.msg_association import process_association
 
 """ maps the message type (received in the client's message) to the function that will process it
     there aren't many, because the controller is supposed to be the active part (it requests info or sets values)
 """
-map_msg_to_procedure = {
-  MSG_TYPE.MSG_ASSOCIATION                 : process_association,
-  MSG_TYPE.MSG_AUTHORIZATION               : process_association,
-  MSG_TYPE.MSG_BYE_TYPE                    : process_bye,
-  MSG_TYPE.MSG_CHANGED_AP                  : process_msg_not_implemented,
-  MSG_TYPE.MSG_DISASSOCIATION              : process_association,
-  MSG_TYPE.MSG_GET_802_11E_ENABLED         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_ACS                     : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_BROADCASTSSID        : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_CTSPROTECTION_ENABLED: process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_DTIMINTERVAL         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_FRAMEBURSTENABLED    : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_GUARDINTERVAL        : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_IN_RANGE_TYPE        : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_AP_SSID                 : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_BEACON_INTERVAL         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_BEACON_INTERVAL         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_BYTESRECEIVED           : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_BYTESSENT               : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_CHANNELINFO             : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_CPU                     : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_CURRENTCHANNEL          : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_FASTBSSTRANSITION_COMPATIBLE : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_MEMORY                  : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_PACKETSLOST             : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_PACKETSRECEIVED         : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_PACKETSSENT             : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_PREAMBLE                : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_RADIO_WLANS             : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_SNR                     : process_msg_not_implemented,
-  MSG_TYPE.MSG_GET_VALIDCHANNELS           : process_msg_not_implemented,
-  MSG_TYPE.MSG_HELLO_TYPE                  : process_hello,
-  MSG_TYPE.MSG_PING                        : process_msg_ping,
-  MSG_TYPE.MSG_PING                        : process_msg_not_implemented,
-  MSG_TYPE.MSG_REASSOCIATION               : process_association,
-  MSG_TYPE.MSG_SET_AP_BROADCASTSSID        : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_AP_CTSPROTECTION_ENABLED: process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_AP_DTIMINTERVAL         : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_AP_FRAMEBURSTENABLED    : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_AP_GUARDINTERVAL        : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD         : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_BEACON_INTERVAL         : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_CURRENTCHANNEL          : process_msg_not_implemented,
-  MSG_TYPE.MSG_SET_PREAMBLE                : process_msg_not_implemented,
-  MSG_TYPE.MSG_USER_CONNECTING             : process_association,
-  MSG_TYPE.MSG_USER_DISCONNECTING          : process_association,
-  MSG_TYPE.MSG_MEAN_STA_STATISTICS_GET     : process_msg_not_implemented,
-  MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_INTERFACE: process_msg_not_implemented,
-  MSG_TYPE.MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE: process_msg_not_implemented,
-  MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_ALPHA: process_msg_not_implemented,
-  MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_TIME : process_msg_not_implemented,
-}
+map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
+                        MSG_TYPE.MSG_AUTHORIZATION: process_association,
+                        MSG_TYPE.MSG_BYE_TYPE: process_bye,
+                        MSG_TYPE.MSG_CHANGED_AP: process_msg_not_implemented,
+                        MSG_TYPE.MSG_DISASSOCIATION: process_association,
+                        MSG_TYPE.MSG_GET_802_11E_ENABLED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_ACS: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_BROADCASTSSID: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_CTSPROTECTION_ENABLED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_DTIMINTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_FRAMEBURSTENABLED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_GUARDINTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_IN_RANGE_TYPE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_AP_SSID: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_BEACON_INTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_BEACON_INTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_BYTESRECEIVED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_BYTESSENT: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_CHANNELINFO: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_CPU: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_CURRENTCHANNEL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_FASTBSSTRANSITION_COMPATIBLE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_MEMORY: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_PACKETSLOST: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_PACKETSRECEIVED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_PACKETSSENT: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_PREAMBLE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_RADIO_WLANS: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_SNR: process_msg_not_implemented,
+                        MSG_TYPE.MSG_GET_VALIDCHANNELS: process_msg_not_implemented,
+                        MSG_TYPE.MSG_HELLO_TYPE: process_hello,
+                        MSG_TYPE.MSG_PING: process_msg_ping,
+                        MSG_TYPE.MSG_PING: process_msg_not_implemented,
+                        MSG_TYPE.MSG_REASSOCIATION: process_association,
+                        MSG_TYPE.MSG_SET_AP_BROADCASTSSID: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_AP_CTSPROTECTION_ENABLED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_AP_DTIMINTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_AP_FRAMEBURSTENABLED: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_AP_GUARDINTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_BEACON_INTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_CURRENTCHANNEL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_PREAMBLE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_USER_CONNECTING: process_association,
+                        MSG_TYPE.MSG_USER_DISCONNECTING: process_association,
+                        MSG_TYPE.MSG_MEAN_STA_STATISTICS_GET: process_msg_not_implemented,
+                        MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_INTERFACE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE: process_msg_not_implemented,
+                        MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_ALPHA: process_msg_not_implemented,
+                        MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_TIME: process_msg_not_implemented,
+                        }
 """all message types supported"""
 
 

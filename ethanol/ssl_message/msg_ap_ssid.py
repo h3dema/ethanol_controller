@@ -16,32 +16,29 @@
 @requires: construct 2.5.2
 """
 
-from datetime import datetime
-from construct import SLInt32, ULInt32, SLInt64, LFloat32, CString
+from construct import SLInt32, ULInt32
 from construct import Embed, Struct, Container, Array
-from construct import If
 
 
 from pox.ethanol.ssl_message.msg_core import msg_default, field_ssid, field_station, field_intf_name
-from pox.ethanol.ssl_message.msg_core import BooleanFlag
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 ssid_info = Struct('ssid_info',
-                    Embed(field_intf_name),
-                    Embed(field_ssid),
-                    ULInt32('channel'),
-                    ULInt32('frequency'),
-  )
+                   Embed(field_intf_name),
+                   Embed(field_ssid),
+                   ULInt32('channel'),
+                   ULInt32('frequency'),
+                   )
 """ information about the configured SSID: wiphy, ESSID, channel, frequency, mode
 """
 
 msg_ap_ssid = Struct('msg_ap_ssid',
-       Embed(msg_default),          # default fields
-       Embed(field_station),
-       SLInt32('num_ssids'),
-       Array(lambda ctx: ctx.num_ssids, ssid_info),
-     )
+                     Embed(msg_default),          # default fields
+                     Embed(field_station),
+                     SLInt32('num_ssids'),
+                     Array(lambda ctx: ctx.num_ssids, ssid_info),
+                     )
 """ message structure """
 
 

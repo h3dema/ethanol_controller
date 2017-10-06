@@ -28,9 +28,8 @@ from construct import CString
 from construct import Struct
 from construct import If
 
-from construct.lib.py3compat import int2byte
 from construct.macros import SymmetricMapping
-from construct.debug import Probe
+# from construct.debug import Probe
 from construct import Field
 from struct import pack, unpack
 
@@ -44,10 +43,11 @@ def toHex(s):
     for ch in s:
         hv = hex(ord(ch)).replace('0x', '')
         if len(hv) == 1:
-            hv = '0'+hv
+            hv = '0' + hv
         lst.append(hv)
 
-    return reduce(lambda x,y:x+y, lst)
+    return reduce(lambda x, y: x + y, lst)
+
 
 def int32_to_bytes(i, endian='l'):
     """
@@ -57,11 +57,12 @@ def int32_to_bytes(i, endian='l'):
     """
     v = unpack("4b", pack("I", i))
     if endian == 'b':
-      return chr(v[3])+chr(v[2])+chr(v[1])+chr(v[0])
+        return chr(v[3]) + chr(v[2]) + chr(v[1]) + chr(v[0])
     else:
-      return chr(v[0])+chr(v[1])+chr(v[2])+chr(v[3])
+        return chr(v[0]) + chr(v[1]) + chr(v[2]) + chr(v[3])
 
-def BooleanFlag(name, truth_value = 1, false_value = 0, default = False):
+
+def BooleanFlag(name, truth_value=1, false_value=0, default=False):
     """
       Defines a Construct boolean type. The flag is coded as a 32 bit value
     """
@@ -83,79 +84,73 @@ def BooleanFlag(name, truth_value = 1, false_value = 0, default = False):
     :param default: default value (default False)
     """
     return SymmetricMapping(Field(name, 4),
-        #FormatField(name, "<", "l")
-        {True : int32_to_bytes(truth_value), False : int32_to_bytes(false_value)},
-        default = default,
-    )
+                            # FormatField(name, "<", "l")
+                            {True: int32_to_bytes(truth_value), False: int32_to_bytes(false_value)},
+                            default=default,
+                            )
+
 
 msg_default = Struct('msg_default',
-                   #Probe(), # utilizado para debug
-                   SLInt32('m_type'),
-                   SLInt32('m_id'),
-                   SLInt32('p_version_length'),
-                   CString("p_version"),
-                   #Probe(),
-                   SLInt32('m_size'),
-              )
+                     # Probe(), # utilizado para debug
+                     SLInt32('m_type'),
+                     SLInt32('m_id'),
+                     SLInt32('p_version_length'),
+                     If(lambda ctx: ctx["p_version_length"] > 0, CString("p_version")),
+                     # Probe(),
+                     SLInt32('m_size'),
+                     )
 """
   default message structure
   to be embedded in the first part of every message
 """
 
 field_intf_name = Struct('intf_name',
-                        SLInt32('intf_name_size'),
-                        If(lambda ctx: ctx["intf_name_size"] > 0,
-                          CString("intf_name")
-                        ),
-                  )
+                         SLInt32('intf_name_size'),
+                         If(lambda ctx: ctx["intf_name_size"] > 0, CString("intf_name")),
+                         )
 """ handles an interface name field (a C char * field)
 """
 
 field_mac_addr = Struct('mac_addr',
                         SLInt32('mac_addr_size'),
-                        If(lambda ctx: ctx["mac_addr_size"] > 0,
-                          CString("mac_addr")
-                        ),
-                  )
+                        If(lambda ctx: ctx["mac_addr_size"] > 0, CString("mac_addr")),
+                        )
 """ handles a mac address field (a C char * field)
 """
 
 field_ssid = Struct('ssid',
-                        SLInt32('ssid_size'),
-                        If(lambda ctx: ctx["ssid_size"] > 0,
-                          CString("ssid")
-                        ),
-                  )
+                    SLInt32('ssid_size'),
+                    If(lambda ctx: ctx["ssid_size"] > 0, CString("ssid")),
+                    )
 """ handles a ssid field (a C char * field)
 """
 
 field_station = Struct('station_connection',
-                    SLInt32('sta_ip_size'),
-                    If(lambda ctx: ctx["sta_ip_size"] > 0,
-                      CString("sta_ip")
-                    ),
-                    SLInt32('sta_port'),
-                )
+                       SLInt32('sta_ip_size'),
+                       If(lambda ctx: ctx["sta_ip_size"] > 0, CString("sta_ip")),
+                       SLInt32('sta_port'),
+                       )
 """ handles a station IP address (a C char * field), and its port (a C int field)
 """
 
+
 def decode_default_fields(received_msg):
-  """ handles the default header of all ethanol's messages
-  @param received_msg: byte stream to be decoded (parsed) using construct message struct
-  """
-  msg = msg_default.parse(received_msg)
-  #print "decode_default_fields", msg
-  return msg
+    """ handles the default header of all ethanol's messages
+    @param received_msg: byte stream to be decoded (parsed) using construct message struct
+    """
+    msg = msg_default.parse(received_msg)
+    # print "decode_default_fields", msg
+    return msg
 
 
 if __name__ == "__main__":
-  a = BooleanFlag('flag')
-  f = a.build(True)
-  print ("True : ", f)
-  c = a.parse(f)
-  print ("c : ", c)
+    a = BooleanFlag('flag')
+    f = a.build(True)
+    print ("True : ", f)
+    c = a.parse(f)
+    print ("c : ", c)
 
-  f = a.build(False)
-  print ("False: ", f)
-  c = a.parse(f)
-  print ("c : ", c)
+    f = a.build(False)
+    print ("False: ", f)
+    c = a.parse(f)
+    print ("c : ", c)

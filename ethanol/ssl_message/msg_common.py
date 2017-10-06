@@ -16,7 +16,7 @@ import ssl
 from socket import socket, AF_INET, SOCK_STREAM
 
 from pox.ethanol.ssl_message.enum import Enum
-from pox.ethanol.ssl_message.msg_error import get_error_msg
+from pox.ethanol.ssl_message.msg_core import msg_default
 
 
 # #####################################
@@ -32,150 +32,149 @@ VERSION = "1.0.3"  #: ethanol version
 #
 # #####################################
 
-MSG_TYPE = Enum(
-  'MSG_HELLO_TYPE',
-  'MSG_BYE_TYPE',
-  # // tipo das mensagens de erro
-  'MSG_ERR_TYPE',
-  # ping
-  'MSG_PING',
-  'MSG_PONG',
-  # getmac
-  'MSG_GET_MAC',
-  # returns information about interfaces
-  'MSG_GET_ONE_INTF',
-  'MSG_GET_ALL_INTF',
-  # ap
-  'MSG_GET_AP_IN_RANGE_TYPE',
-  # association
-  'MSG_ENABLE_ASSOC_MSG',
-  'MSG_ASSOCIATION',
-  'MSG_DISASSOCIATION',
-  'MSG_REASSOCIATION',
-  'MSG_AUTHORIZATION',
-  'MSG_USER_DISCONNECTING',
-  'MSG_USER_CONNECTING',
-  # ovsctl --> remove these messages
-  'MSG_QUEUE_CREATE',
-  'MSG_QUEUE_CLEAR',
-  'MSG_QUEUE_DESTROY',
-  'MSG_QUEUE_DESTROY_ALL',
-  'MSG_QUEUE_CONFIG',
-  'MSG_SHOW_PORTS',
-  # beacon - ap side
-  'MSG_INFORM_BEACON',
-  'MSG_REQUEST_BEACON',
-  # ap
-  'MSG_GET_PREAMBLE',
-  'MSG_SET_PREAMBLE',
-  'MSG_GET_QUEUEDISCIPLINE',
-  'MSG_SET_QUEUEDISCIPLINE',
-  'MSG_GET_SUPPORTEDINTERFACE',
-  'MSG_GET_INTERFERENCEMAP',
-  'MSG_GET_AP_SSID',
-  # vap
-  'MSG_GET_AP_BROADCASTSSID',
-  'MSG_SET_AP_BROADCASTSSID',
-  'MSG_GET_AP_CAC',
-  'MSG_SET_AP_CAC',
-  'MSG_GET_AP_FRAMEBURSTENABLED',
-  'MSG_SET_AP_FRAMEBURSTENABLED',
-  'MSG_GET_AP_GUARDINTERVAL',
-  'MSG_SET_AP_GUARDINTERVAL',
-  'MSG_GET_AP_DTIMINTERVAL',
-  'MSG_SET_AP_DTIMINTERVAL',
-  'MSG_GET_AP_CTSPROTECTION_ENABLED',
-  'MSG_SET_AP_CTSPROTECTION_ENABLED',
-  'MSG_GET_AP_RTSTHRESHOLD',
-  'MSG_SET_AP_RTSTHRESHOLD',
-  'MSG_SET_AP_SSID',
-  'MSG_GET_AP_ENABLED',
-  'MSG_SET_AP_ENABLED',
-  'MSG_VAP_CREATE',
-  'MSG_SET_CONF_SSID_RADIO',
-  'MSG_DISCONNECT_USER',
-  'MSG_DEAUTHENTICATE_USER',
-  'MSG_PROGRAM_PROBE_REQUEST',
-  'MSG_PROBERECEIVED',
-  'MSG_MGMTFRAME_REGISTER',
-  'MSG_MGMTFRAME_UNREGISTER',
-  'MSG_MGMTFRAME',
-  # network
-  'MSG_REQUEST_BEGIN_ASSOCIATION',
-  'MSG_REQUEST_STATION_REASSOCIATE',
-  'MSG_GET_ROUTES',
-  # radio
-  'MSG_GET_VALIDCHANNELS',
-  'MSG_SET_CURRENTCHANNEL',
-  'MSG_GET_CURRENTCHANNEL',
-  'MSG_GET_FREQUENCY',
-  'MSG_SET_FREQUENCY',
-  'MSG_GET_BEACON_INTERVAL',
-  'MSG_SET_BEACON_INTERVAL',
-  'MSG_GET_TX_BITRATES',
-  'MSG_SET_TX_BITRATES',
-  'MSG_GET_TX_BITRATE',
-  'MSG_GET_POWERSAVEMODE',
-  'MSG_SET_POWERSAVEMODE',
-  'MSG_GET_FRAGMENTATIONTHRESHOLD',
-  'MSG_SET_FRAGMENTATIONTHRESHOLD',
-  'MSG_GET_CHANNELBANDWITDH',
-  'MSG_SET_CHANNELBANDWITDH',
-  'MSG_GET_CHANNELINFO',
-  'MSG_WLAN_INFO',
-  'MSG_GET_RADIO_WLANS',
-  'MSG_GET_RADIO_LINKSTATISTICS',
-  # this messages works with station and the AP
-  # if a station ID (ip and port addresses) is passed with the function call', then the AP receives the messages
-  # relays the message to the station', grabs the station's response and relays this response to the controller
-  # but if there is not station ID', then the message's action is performed at the AP
-  'MSG_GET_IPV4_ADDRESS',
-  'MSG_SET_IPV4_ADDRESS',
-  'MSG_GET_IPV6_ADDRESS',
-  'MSG_SET_IPV6_ADDRESS',
-  'MSG_GET_802_11E_ENABLED',
-  'MSG_GET_FASTBSSTRANSITION_COMPATIBLE',
-  'MSG_GET_BYTESRECEIVED',
-  'MSG_GET_BYTESSENT',
-  'MSG_GET_PACKETSRECEIVED',
-  'MSG_GET_PACKETSSENT',
-  'MSG_GET_PACKETSLOST',
-  'MSG_GET_JITTER',
-  'MSG_GET_DELAY',
-  'MSG_GET_TXPOWER',
-  'MSG_SET_TXPOWER',
-  'MSG_GET_SNR',
-  'MSG_GET_QUALITY',
-  'MSG_GET_UPTIME',
-  'MSG_GET_RETRIES',
-  'MSG_GET_FAILED',
-  'MSG_GET_APSINRANGE',
-  'MSG_GET_BEACONINFO',
-  'MSG_GET_NOISEINFO',
-  'MSG_GET_LINKMEASUREMENT',
-  'MSG_GET_STATISTICS',
-  'MSG_GET_LOCATION',
-  'MSG_TRIGGER_TRANSITION',
-  'MSG_GET_CPU',
-  'MSG_GET_MEMORY',
-  'MSG_SCAN',
-  'MSG_GET_LINK_INFO',
-  'MSG_SET_SNR_THRESHOLD',
-  'MSG_SET_SNR_INTERVAL',
-  'MSG_GET_ACS',
-  'MSG_SET_SNR_THRESHOLD_REACHED',
-  'MSG_GET_STA_STATISTICS',
-  'MSG_GET_MEAN_STA_STATISTICS',
-  'MSG_MEAN_STA_STATISTICS_GET',
-  'MSG_MEAN_STA_STATISTICS_SET_INTERFACE',
-  'MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE',
-  'MSG_MEAN_STA_STATISTICS_SET_ALPHA',
-  'MSG_MEAN_STA_STATISTICS_SET_TIME',
-  'MSG_CHANGED_AP',
-  'MSG_TOS_CLEANALL',
-  'MSG_TOS_ADD',
-  'MSG_TOS_REPLACE',
-)
+MSG_TYPE = Enum('MSG_HELLO_TYPE',
+                'MSG_BYE_TYPE',
+                # // tipo das mensagens de erro
+                'MSG_ERR_TYPE',
+                # ping
+                'MSG_PING',
+                'MSG_PONG',
+                # getmac
+                'MSG_GET_MAC',
+                # returns information about interfaces
+                'MSG_GET_ONE_INTF',
+                'MSG_GET_ALL_INTF',
+                # ap
+                'MSG_GET_AP_IN_RANGE_TYPE',
+                # association
+                'MSG_ENABLE_ASSOC_MSG',
+                'MSG_ASSOCIATION',
+                'MSG_DISASSOCIATION',
+                'MSG_REASSOCIATION',
+                'MSG_AUTHORIZATION',
+                'MSG_USER_DISCONNECTING',
+                'MSG_USER_CONNECTING',
+                # ovsctl --> remove these messages
+                'MSG_QUEUE_CREATE',
+                'MSG_QUEUE_CLEAR',
+                'MSG_QUEUE_DESTROY',
+                'MSG_QUEUE_DESTROY_ALL',
+                'MSG_QUEUE_CONFIG',
+                'MSG_SHOW_PORTS',
+                # beacon - ap side
+                'MSG_INFORM_BEACON',
+                'MSG_REQUEST_BEACON',
+                # ap
+                'MSG_GET_PREAMBLE',
+                'MSG_SET_PREAMBLE',
+                'MSG_GET_QUEUEDISCIPLINE',
+                'MSG_SET_QUEUEDISCIPLINE',
+                'MSG_GET_SUPPORTEDINTERFACE',
+                'MSG_GET_INTERFERENCEMAP',
+                'MSG_GET_AP_SSID',
+                # vap
+                'MSG_GET_AP_BROADCASTSSID',
+                'MSG_SET_AP_BROADCASTSSID',
+                'MSG_GET_AP_CAC',
+                'MSG_SET_AP_CAC',
+                'MSG_GET_AP_FRAMEBURSTENABLED',
+                'MSG_SET_AP_FRAMEBURSTENABLED',
+                'MSG_GET_AP_GUARDINTERVAL',
+                'MSG_SET_AP_GUARDINTERVAL',
+                'MSG_GET_AP_DTIMINTERVAL',
+                'MSG_SET_AP_DTIMINTERVAL',
+                'MSG_GET_AP_CTSPROTECTION_ENABLED',
+                'MSG_SET_AP_CTSPROTECTION_ENABLED',
+                'MSG_GET_AP_RTSTHRESHOLD',
+                'MSG_SET_AP_RTSTHRESHOLD',
+                'MSG_SET_AP_SSID',
+                'MSG_GET_AP_ENABLED',
+                'MSG_SET_AP_ENABLED',
+                'MSG_VAP_CREATE',
+                'MSG_SET_CONF_SSID_RADIO',
+                'MSG_DISCONNECT_USER',
+                'MSG_DEAUTHENTICATE_USER',
+                'MSG_PROGRAM_PROBE_REQUEST',
+                'MSG_PROBERECEIVED',
+                'MSG_MGMTFRAME_REGISTER',
+                'MSG_MGMTFRAME_UNREGISTER',
+                'MSG_MGMTFRAME',
+                # network
+                'MSG_REQUEST_BEGIN_ASSOCIATION',
+                'MSG_REQUEST_STATION_REASSOCIATE',
+                'MSG_GET_ROUTES',
+                # radio
+                'MSG_GET_VALIDCHANNELS',
+                'MSG_SET_CURRENTCHANNEL',
+                'MSG_GET_CURRENTCHANNEL',
+                'MSG_GET_FREQUENCY',
+                'MSG_SET_FREQUENCY',
+                'MSG_GET_BEACON_INTERVAL',
+                'MSG_SET_BEACON_INTERVAL',
+                'MSG_GET_TX_BITRATES',
+                'MSG_SET_TX_BITRATES',
+                'MSG_GET_TX_BITRATE',
+                'MSG_GET_POWERSAVEMODE',
+                'MSG_SET_POWERSAVEMODE',
+                'MSG_GET_FRAGMENTATIONTHRESHOLD',
+                'MSG_SET_FRAGMENTATIONTHRESHOLD',
+                'MSG_GET_CHANNELBANDWITDH',
+                'MSG_SET_CHANNELBANDWITDH',
+                'MSG_GET_CHANNELINFO',
+                'MSG_WLAN_INFO',
+                'MSG_GET_RADIO_WLANS',
+                'MSG_GET_RADIO_LINKSTATISTICS',
+                # this messages works with station and the AP
+                # if a station ID (ip and port addresses) is passed with the function call', then the AP receives the messages
+                # relays the message to the station', grabs the station's response and relays this response to the controller
+                # but if there is not station ID', then the message's action is performed at the AP
+                'MSG_GET_IPV4_ADDRESS',
+                'MSG_SET_IPV4_ADDRESS',
+                'MSG_GET_IPV6_ADDRESS',
+                'MSG_SET_IPV6_ADDRESS',
+                'MSG_GET_802_11E_ENABLED',
+                'MSG_GET_FASTBSSTRANSITION_COMPATIBLE',
+                'MSG_GET_BYTESRECEIVED',
+                'MSG_GET_BYTESSENT',
+                'MSG_GET_PACKETSRECEIVED',
+                'MSG_GET_PACKETSSENT',
+                'MSG_GET_PACKETSLOST',
+                'MSG_GET_JITTER',
+                'MSG_GET_DELAY',
+                'MSG_GET_TXPOWER',
+                'MSG_SET_TXPOWER',
+                'MSG_GET_SNR',
+                'MSG_GET_QUALITY',
+                'MSG_GET_UPTIME',
+                'MSG_GET_RETRIES',
+                'MSG_GET_FAILED',
+                'MSG_GET_APSINRANGE',
+                'MSG_GET_BEACONINFO',
+                'MSG_GET_NOISEINFO',
+                'MSG_GET_LINKMEASUREMENT',
+                'MSG_GET_STATISTICS',
+                'MSG_GET_LOCATION',
+                'MSG_TRIGGER_TRANSITION',
+                'MSG_GET_CPU',
+                'MSG_GET_MEMORY',
+                'MSG_SCAN',
+                'MSG_GET_LINK_INFO',
+                'MSG_SET_SNR_THRESHOLD',
+                'MSG_SET_SNR_INTERVAL',
+                'MSG_GET_ACS',
+                'MSG_SET_SNR_THRESHOLD_REACHED',
+                'MSG_GET_STA_STATISTICS',
+                'MSG_GET_MEAN_STA_STATISTICS',
+                'MSG_MEAN_STA_STATISTICS_GET',
+                'MSG_MEAN_STA_STATISTICS_SET_INTERFACE',
+                'MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE',
+                'MSG_MEAN_STA_STATISTICS_SET_ALPHA',
+                'MSG_MEAN_STA_STATISTICS_SET_TIME',
+                'MSG_CHANGED_AP',
+                'MSG_TOS_CLEANALL',
+                'MSG_TOS_ADD',
+                'MSG_TOS_REPLACE',
+                )
 """ contains all constants used as message type"""
 
 # #####################################
@@ -212,7 +211,16 @@ MSG_ERROR_TYPE = Enum('ERROR_UNKNOWN',
 DEFAULT_WIFI_INTFNAME = 'wlan0'
 
 
-def hex(s):
+def tri_boolean(v, d):
+    if v not in d:
+        return None
+    elif d[v] == 1:
+        return True
+    else:
+        return False
+
+
+def hexadecimal(s):
     """
       converts a string of bytes to a string of hexa
     """
@@ -253,6 +261,19 @@ def connect_ssl_socket(server):
 """
 
 
+def is_error_msg(received_msg):
+    msg = msg_default.parse(received_msg)
+    return msg.m_type == MSG_TYPE.MSG_ERR_TYPE
+
+
+def get_error_msg(received_msg):
+    if is_error_msg(received_msg):
+        return None
+    from msg_error import msg_error
+    msg = msg_error.parse(received_msg)
+    return msg
+
+
 def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
     """ generic function to send and receive message
 
@@ -280,10 +301,10 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         return
 
     received_msg = ssl_sock.read(BUFFER_SIZE)
+
+    # print hexadecimal(received_msg)  # AQUI <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REMOVER
     ssl_sock.close()
     if received_msg != '':
-        from pox.ethanol.ssl_message.msg_error import is_error_msg
-
         if is_error_msg(received_msg):
             msg = get_error_msg(received_msg)
             return True, msg
@@ -293,4 +314,3 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
             return False, msg
     else:
         return True, None
-

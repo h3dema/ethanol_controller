@@ -21,31 +21,30 @@ no process is implemented: the controller is not supposed to respond to these me
 @requires: construct 2.5.2
 """
 
-from construct import ULInt32, SLInt32, SLInt64
-from construct import Embed
+from construct import SLInt32, CString
+from construct import Embed, If
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, BooleanFlag
-from pox.ethanol.ssl_message.msg_core   import field_intf_name, field_ssid
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 field_current_ap = Struct('current_ap',
-                        SLInt32('current_ap_size'),
-                        If(lambda ctx: ctx["current_ap_size"] > 0,
-                          CString("current_ap")
-                        ),
-                  )
+                          SLInt32('current_ap_size'),
+                          If(lambda ctx: ctx["current_ap_size"] > 0, CString("current_ap")),
+                          )
 
 msg_changed_ap = Struct('msg_changed_ap',
-              Embed(msg_default),   # default fields
-              Embed(field_intf_name),
-              Embed(field_current_ap),
-              SLInt32('status'),                    
-              #Probe()
-          )
+                        Embed(msg_default),   # default fields
+                        Embed(field_intf_name),
+                        Embed(field_current_ap),
+                        SLInt32('status'),
+                        # Probe()
+                        )
+
 
 def changed_ap(server, id=0, status=0, current_ap=None, intf_name=None):
   """ verify is the interface is broadcasting the SSID
@@ -54,7 +53,7 @@ def changed_ap(server, id=0, status=0, current_ap=None, intf_name=None):
     @param intf_name: names of the wireless interface
     @type intf_name: list of str
     @param status: inform the status of the operation (result from change ap operation)
-    @type status: int 
+    @type status: int
     @param current_ap: MAC address of the ap
     @type current_ap: str
   """
@@ -63,7 +62,7 @@ def changed_ap(server, id=0, status=0, current_ap=None, intf_name=None):
 
   #1) create message
   msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_CHANGED_AP, 
+                  m_type = MSG_TYPE.MSG_CHANGED_AP,
                   m_id = id,
                   p_version_length=len(VERSION),
                   p_version = VERSION,

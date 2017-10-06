@@ -20,34 +20,32 @@
 @requires: construct 2.5.2
 """
 from datetime import datetime
-from construct import SLInt32, LFloat32, CString
+from construct import SLInt32, LFloat32, CString, SLInt8
 from construct import Embed, Struct, Container
 from construct import If
-from construct.debug import Probe
+# from construct.debug import Probe
 
 from pox.ethanol.ssl_message.msg_core import msg_default
-from pox.ethanol.ssl_message.msg_core import BooleanFlag
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, BUFFER_SIZE
 from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
-from pox.ethanol.ssl_message.msg_error import is_error_msg
+from pox.ethanol.ssl_message.msg_common import is_error_msg, tri_boolean
+
 
 msg_ping = Struct('msg_ping',
-                   Embed(msg_default),   # default fields
-                   SLInt32('data_size'),
-                   If(lambda ctx: ctx["data_size"] > 0,
-                      CString("data")
-                   ),
-                   #Probe(),
-                 )
+                  Embed(msg_default),   # default fields
+                  SLInt32('data_size'),
+                  If(lambda ctx: ctx["data_size"] > 0, CString("data")),
+                  # Probe(),
+                  )
 """ ping message data structure
 """
 
 msg_pong = Struct('msg_pong',
-                   Embed(msg_default),         # default fields
-                   LFloat32('rtt'),            # float com 32 bits, LFloat32 (C little endian 32 bits)
-                   BooleanFlag('verify_data'), # class boolean
-                   #Probe(),
-                 )
+                  Embed(msg_default),          # default fields
+                  LFloat32('rtt'),             # float com 32 bits, LFloat32 (C little endian 32 bits)
+                  SLInt8('verify_data'),  # class boolean
+                  # Probe(),
+                  )
 """ pong message data structure
 """
 
@@ -115,7 +113,9 @@ def send_msg_ping(server, id=0, num_tries=1, p_size=64):
   for i in range(num_tries):
     msg = msg_ping.build(msg_struct)
     msg = send_msg(server, msg)
-    if None != msg:
+    if msg is not None:
+      verify_data = tri_boolean('verify_data', msg)
+      msg['verify_data'] = verify_data
       ret.append(msg)
     msg_struct.m_id = msg_struct.m_id + 1
 

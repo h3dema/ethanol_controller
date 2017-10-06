@@ -21,23 +21,24 @@ no process is implemented: the controller is not supposed to respond to these me
 @requires: construct 2.5.2
 """
 
-from construct import ULInt32, SLInt64
+from construct import ULInt32
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, BooleanFlag
-from pox.ethanol.ssl_message.msg_core   import field_intf_name, field_ssid
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_rtsthreshold = Struct('msg_ap_rtsthreshold',
-              Embed(msg_default),   # default fields
-              Embed(field_intf_name),
-              ULInt32('rts_threshold'),                    
-              #Probe(),
-          )
+                             Embed(msg_default),   # default fields
+                             Embed(field_intf_name),
+                             ULInt32('rts_threshold'),
+                             # Probe(),
+                             )
+
 
 def get_ap_rtsthreshold(server, id=0, intf_name=None):
   """ verify is the interface is broadcasting the SSID
@@ -52,7 +53,7 @@ def get_ap_rtsthreshold(server, id=0, intf_name=None):
 
   #1) create message
   msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD, 
+                  m_type = MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD,
                   m_id = id,
                   p_version_length=len(VERSION),
                   p_version = VERSION,
@@ -81,7 +82,7 @@ def set_ap_rtsthreshold(server, id=0, intf_name=None, rts_threshold=0):
 
   #1) create message
   msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD, 
+                  m_type = MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD,
                   m_id = id,
                   p_version_length=len(VERSION),
                   p_version = VERSION,

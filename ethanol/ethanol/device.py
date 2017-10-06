@@ -50,10 +50,9 @@ class Device(object):
         @param intf_name: name of the wireless interface that this device uses
         """
         log.debug("starting DEVICE constructor")
-        self.__id = uuid.uuid4() #
-        self.__socket = socket # socket (ip, port) that will be used to connect to this station
-        self.__ip = socket[0]
-        self.__port = socket[1]
+        self.__id = uuid.uuid4()  # UUID
+        self.__socket = socket    # socket (ip, port) that will be used to connect to this station
+        self.__ip, self.__port = socket
         self.__intf_name = intf_name
         self.__mac_address = None
         self.__msg_id = 0
@@ -79,7 +78,6 @@ class Device(object):
         self.__msg_id += 1
         return id
 
-
     @property
     def intf_name(self):
         """ wireless interface of this device (set during __init__)
@@ -94,7 +92,7 @@ class Device(object):
 
     @property
     def ipv4_address(self):
-        """NOT IMPLEMENTED YET
+        """NOT IMPLEMENTED YET -- function in C is ok
 
            get the device's IP address (version 4)
         """
@@ -102,7 +100,7 @@ class Device(object):
 
     @ipv4_address.setter
     def ipv4_address(self, ip_conf):
-        """NOT IMPLEMENTED YET
+        """NOT IMPLEMENTED YET -- function in C is ok
 
            set IP v4 parameters: ip, netmask, gateway
         """
@@ -110,7 +108,7 @@ class Device(object):
 
     @property
     def ipv6_address(self):
-        """NOT IMPLEMENTED YET
+        """NOT IMPLEMENTED YET -- function in C is ok
 
          get the device's IP address (version 6)
         """
@@ -118,7 +116,7 @@ class Device(object):
 
     @ipv6_address.setter
     def ipv6_address(self, ip_conf):
-        """NOT IMPLEMENTED YET
+        """NOT IMPLEMENTED YET -- function in C is ok
 
            set the device's IP address (version 6)
         """
