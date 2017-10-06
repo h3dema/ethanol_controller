@@ -23,6 +23,7 @@ if ethanol is running, this module can also run.
 It checks and waits until a specified AP connects.
 When it connects, the module prints a list of AP's already connected to the controller.
 
+The most important part of the module is the function **launch()**. This is the entry point that must exists in all POX modules. When pox.py starts running, it calls **launch()** function in all its modules. So this functions loads all dependencies and starts all process.
 
 # More Info #
 
