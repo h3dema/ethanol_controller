@@ -24,3 +24,8 @@ Inside **template** directory, you find a sample file, showing how to create a s
 # More info #
 
 See more information in [ethanol/ssl_message/README.MD.](https://github.com/h3dema/ethanol_controller/blob/master/ethanol/ssl_message/README.MD)
+
+
+# Connection #
+
+![alt text](https://github.com/h3dema/ethanol_controller/blob/master/connection.png "Connection Example")
