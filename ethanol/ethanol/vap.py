@@ -78,7 +78,7 @@ class VAP(Device):
         from pox.ethanol.ethanol.station import Station
 
         if station is None or not isinstance(station, Station):
-          return
+            return
         self.__list_of_stations.append(station)
 
     def unregister_station(self, station):
@@ -265,7 +265,7 @@ class VAP(Device):
 
     # if Interval is None, will send each probe received
     # else Interval is number > 0 in milisseconds
-    def program_ProbeRequest_Interval(self, Interval = None):
+    def program_ProbeRequest_Interval(self, Interval=None):
         '''not implemented yet'''
         pass
 
@@ -276,7 +276,7 @@ class VAP(Device):
     def evMgmtFrameReceived(msg_type):
         '''not implemented yet'''
         if not msg_type in self.__mgmt_function:
-            return true
+            return True
         else:
             pass
 
@@ -294,4 +294,3 @@ class VAP(Device):
     def connectNewUser(station):
         '''not implemented yet'''
         pass
-
