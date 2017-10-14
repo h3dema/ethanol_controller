@@ -77,7 +77,7 @@ class VAP(Device):
         '''
         from pox.ethanol.ethanol.station import Station
 
-        if station == None or not isinstance(station, Station):
+        if station is None or not isinstance(station, Station):
           return
         self.__list_of_stations.append(station)
 
