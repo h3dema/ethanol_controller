@@ -28,11 +28,12 @@ from pox.ethanol.ethanol.device import Device
 
 from pox.ethanol.ssl_message.msg_association import register_functions
 from pox.ethanol.ssl_message.msg_log import log
+from pox.ethanol.events import Events
 
 
 class VAP(Device):
-    ''' represents the logical AP (defined by the SSID it contains)
-      inherits DEVICE class
+    """represents the logical AP (defined by the SSID it contains)
+      inherits DEVICE class"""
 
     def __init__(self, server, ssid, radio, mac_address):
         ''' constructor:
@@ -56,8 +57,8 @@ class VAP(Device):
         self.__list_of_stations = []
 
         self.__ssid = ssid  #: setting ssid will configure VAP
-        self.__mgmt_function = {}
         self.__enabled = False
+        self.__mgmtFrame = dict()  # keep a list of listeners for each type of mgmt frame received
 
         log.info("Created VAP with id:%s in interface %s", self.id, intf_name)
 
@@ -272,24 +273,49 @@ class VAP(Device):
         '''not implemented yet'''
         pass
 
-    def evMgmtFrameReceived(self, msg_type):
-        '''not implemented yet'''
-        if not msg_type in self.__mgmt_function:
-            return True
+    def evMgmtFrameReceived(self, msg_type, msg):
+        ''' not implemented yet
+            :param msg_type indicates the type of the management frame. definition are in ieee80211.h file:
+                    #define IEEE80211_STYPE_ASSOC_REQ   0x0000
+                    #define IEEE80211_STYPE_ASSOC_RESP  0x0010
+                    #define IEEE80211_STYPE_REASSOC_REQ 0x0020
+                    #define IEEE80211_STYPE_REASSOC_RESP    0x0030
+                    #define IEEE80211_STYPE_PROBE_REQ   0x0040
+                    #define IEEE80211_STYPE_PROBE_RESP  0x0050
+                    #define IEEE80211_STYPE_BEACON      0x0080
+                    #define IEEE80211_STYPE_ATIM        0x0090
+                    #define IEEE80211_STYPE_DISASSOC    0x00A0
+                    #define IEEE80211_STYPE_AUTH        0x00B0
+                    #define IEEE80211_STYPE_DEAUTH      0x00C0
+                    #define IEEE80211_STYPE_ACTION      0x00D0
+            :param msg message received
+        '''
+        if msg_type not in self.__mgmtFrame or len(self.__mgmtFrame[msg_type]) == 0:
+            return False
         else:
-            pass
+            for listener in self.__mgmtFrame[msg_type]:
+                listener(msg)  # call
 
-    def registerMgmtFrame(self, msg_type, func):
+    def registerMgmtFrame(self, msg_type, listener):
         server = self.__get_connection()
-        self.__mgmt_function[msg_type] = func
-        # register function in the AP
-        # register this object in the message processor
+        if msg_type not in self.__mgmtFrame or len(self.__mgmtFrame[msg_type]) == 0:
+            self.__mgmtFrame[msg_type] = set([listener])
+            # register function in the AP
+            # register this object in the message processor
+        else:
+            self.__mgmtFrame[msg_type].add(listener)
 
-    def unregisterMgmtFrame(self):
-        '''not implemented yet'''
+    def unregisterMgmtFrame(self, msg_type):
+        '''not implemented yet
+           inform the AP that it does not need to send information back to the controller about this type of message
+        '''
+        if msg_type not in self.__mgmtFrame or len(self.__mgmtFrame[msg_type]) == 0:
+            return  # nothing to do
         server = self.__get_connection()
-        pass
+        del self.__mgmtFrame[msg_type]
 
-    def connectNewUser(self, station):
-        '''not implemented yet'''
+    def connectNewUser(self, station, old_ap):
+        '''not implemented yet
+            transfer information about a station from old_ap to this ap
+        '''
         pass
