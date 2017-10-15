@@ -33,7 +33,6 @@ from pox.ethanol.ssl_message.msg_log import log
 class VAP(Device):
     ''' represents the logical AP (defined by the SSID it contains)
       inherits DEVICE class
-    '''
 
     def __init__(self, server, ssid, radio, mac_address):
         ''' constructor:
@@ -217,49 +216,49 @@ class VAP(Device):
         # TODO: get information from physical device
         pass
 
-    def getStationInRange():
+    def getStationInRange(self):
         '''not implemented yet'''
         server = self.__get_connection()
         # TODO: get information from physical device
         pass
 
     # default behavior - subclass if you want to change it
-    def evUserConnecting(mac_station):
+    def evUserConnecting(self, mac_station):
         return True
 
     # default behavior - subclass if you want to change it
-    def evUserAssociating(mac_station):
+    def evUserAssociating(self, mac_station):
         return True
 
     # default behavior - subclass if you want to change it
-    def evUserAuthenticating(mac_station):
+    def evUserAuthenticating(self, mac_station):
         return True
 
     # default behavior - subclass if you want to change it
-    def evUserDisassociating(mac_station):
+    def evUserDisassociating(self, mac_station):
         return True
 
     # default behavior - subclass if you want to change it
-    def evUserReassociating(mac_station):
+    def evUserReassociating(self, mac_station):
         return True
 
     # default behavior - subclass if you want to change it
-    def evUserDisconnecting(mac_station):
+    def evUserDisconnecting(self, mac_station):
         return True
 
-    def disassociateUser(station):
+    def disassociateUser(self, station):
         '''not implemented yet'''
         pass
 
-    def deauthenticateUser():
+    def deauthenticateUser(self):
         '''not implemented yet'''
         pass
 
-    def evFastTransition():
+    def evFastTransition(self):
         '''not implemented yet'''
         pass
 
-    def evFastReassociation():
+    def evFastReassociation(self):
         '''not implemented yet'''
         pass
 
@@ -269,28 +268,28 @@ class VAP(Device):
         '''not implemented yet'''
         pass
 
-    def evProbeRequestReceived():
+    def evProbeRequestReceived(self):
         '''not implemented yet'''
         pass
 
-    def evMgmtFrameReceived(msg_type):
+    def evMgmtFrameReceived(self, msg_type):
         '''not implemented yet'''
         if not msg_type in self.__mgmt_function:
             return True
         else:
             pass
 
-    def registerMgmtFrame(msg_type, func):
+    def registerMgmtFrame(self, msg_type, func):
         server = self.__get_connection()
         self.__mgmt_function[msg_type] = func
         # register function in the AP
         # register this object in the message processor
 
-    def unregisterMgmtFrame():
+    def unregisterMgmtFrame(self):
         '''not implemented yet'''
         server = self.__get_connection()
         pass
 
-    def connectNewUser(station):
+    def connectNewUser(self, station):
         '''not implemented yet'''
         pass
