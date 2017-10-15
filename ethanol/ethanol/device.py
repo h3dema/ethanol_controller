@@ -26,16 +26,22 @@ It is a superclass for Station and VAP
 import uuid
 
 from pox.ethanol.ssl_message.msg_log import log
-from pox.ethanol.ssl_message.msg_sent_received import send_msg_get_bytesreceived, send_msg_get_bytessent
-from pox.ethanol.ssl_message.msg_sent_received import send_msg_get_packetsreceived, send_msg_get_packetssent, send_msg_get_packetslost
+from pox.ethanol.ssl_message.msg_sent_received import \
+    send_msg_get_bytesreceived, send_msg_get_bytessent
+from pox.ethanol.ssl_message.msg_sent_received import \
+    send_msg_get_packetsreceived, send_msg_get_packetssent,\
+    send_msg_get_packetslost
 from pox.ethanol.ssl_message.msg_statistics import send_msg_get_statistics
-from pox.ethanol.ssl_message.msg_snr_power import get_snr, get_txpower, set_txpower
-from pox.ethanol.ssl_message.msg_enabled import is_fastbsstransition_compatible, is_802_11e_enabled
+from pox.ethanol.ssl_message.msg_snr_power import get_snr, get_txpower, \
+    set_txpower
+from pox.ethanol.ssl_message.msg_enabled import \
+    is_fastbsstransition_compatible, is_802_11e_enabled
 from pox.ethanol.ssl_message.msg_memcpu import get_cpu_usage, get_memory_usage
 from pox.ethanol.ssl_message.msg_ap_in_range import get_ap_in_range
 from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrate
 from pox.ethanol.ssl_message.msg_uptime import get_uptime
-from pox.ethanol.ssl_message.msg_tos import msg_tos_cleanall, msg_tos_add, msg_tos_replace
+from pox.ethanol.ssl_message.msg_tos import msg_tos_cleanall, msg_tos_add,\
+    msg_tos_replace
 
 
 class Device(object):
@@ -51,7 +57,8 @@ class Device(object):
         """
         log.debug("starting DEVICE constructor")
         self.__id = uuid.uuid4()  # UUID
-        self.__socket = socket    # socket (ip, port) that will be used to connect to this station
+        self.__socket = socket
+        # socket (ip, port) that will be used to connect to this station
         self.__ip, self.__port = socket
         self.__intf_name = intf_name
         self.__mac_address = None
@@ -65,7 +72,8 @@ class Device(object):
 
     @property
     def get_connection(self):
-        """ returns a tuple representing the socket to connection to the physical station
+        """ returns a tuple representing the socket to connection to the
+        physical station
         """
         return (self.__ip, self.__port)
 
@@ -128,16 +136,20 @@ class Device(object):
         @return: bool
         """
         server = self.get_connection
-        msg, value = is_802_11e_enabled(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = is_802_11e_enabled(server, id=self.msg_id,
+                                        intf_name=self.__intf_name)
         return value
 
     @property
     def fastBSSTransition_compatible(self):
-        """connect to ap requesting if it is "Fast BSS Transition" compatible"""
+        """connect to ap requesting if it is "Fast BSS Transition" compatible
+        """
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection
-        msg, value = is_fastbsstransition_compatible(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = \
+            is_fastbsstransition_compatible(server, id=self.msg_id,
+                                            intf_name=self.__intf_name)
         return value
 
     @property
@@ -148,7 +160,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = send_msg_get_bytesreceived(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = send_msg_get_bytesreceived(server, id=self.msg_id,
+                                                intf_name=self.__intf_name)
         return value
 
     @property
@@ -159,7 +172,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = send_msg_get_bytessent(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = send_msg_get_bytessent(server, id=self.msg_id,
+                                            intf_name=self.__intf_name)
         return value
 
     @property
@@ -170,7 +184,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = send_msg_get_packetsreceived(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = send_msg_get_packetsreceived(server, id=self.msg_id,
+                                                  intf_name=self.__intf_name)
         return value
 
     @property
@@ -181,7 +196,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = send_msg_get_packetssent(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = send_msg_get_packetssent(server, id=self.msg_id,
+                                              intf_name=self.__intf_name)
         log.debug('packetSent device %f', value)
         return value
 
@@ -193,7 +209,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = send_msg_get_packetslost(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = send_msg_get_packetslost(server, id=self.msg_id,
+                                              intf_name=self.__intf_name)
         log.debug('packetsLost device %f', value)
         return value
 
@@ -242,8 +259,10 @@ class Device(object):
         if self.__intf_name is None:
             return -1
         server = self.get_connection  # conexao direta com a estacao
-        msg, stats = send_msg_get_statistics(server, id=self.msg_id, intf_name=self.__intf_name)
-        # log.debug('Statistics device %d, %d, %d, %d, %d, %s', rx_packets, rx_bytes, rx_dropped, tx_packets, tx_bytes, time_stamp)
+        msg, stats = send_msg_get_statistics(server, id=self.msg_id,
+                                             intf_name=self.__intf_name)
+        # log.debug('Statistics device %d, %d, %d, %d, %d, %s', rx_packets,
+        # rx_bytes, rx_dropped, tx_packets, tx_bytes, time_stamp)
         return stats
 
     @property
@@ -259,7 +278,8 @@ class Device(object):
             return -1
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = get_snr(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = get_snr(server, id=self.msg_id,
+                             intf_name=self.__intf_name)
         log.debug('SNR %f', value)
         return value
 
@@ -271,7 +291,8 @@ class Device(object):
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, value = get_txpower(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, value = get_txpower(server, id=self.msg_id,
+                                 intf_name=self.__intf_name)
         log.debug('get TXPower device %f', value)
         return value
 
@@ -281,7 +302,8 @@ class Device(object):
         if self.__intf_name is None:
             return -1
         server = self.get_connection  # conexao direta com a estacao
-        set_txpower(server, id=self.msg_id, intf_name=self.__intf_name, txpower=new_value)
+        set_txpower(server, id=self.msg_id, intf_name=self.__intf_name,
+                    txpower=new_value)
         log.debug('set TXPower device to %f', new_value)
 
     def tx_bitrate(self, sta_mac=None):
@@ -342,14 +364,16 @@ class Device(object):
     @property
     def getAPsInRange(self):
         """get aps that are in range.
-          @note: this method is not precise, because it relies on the spare time the device has to scan all the channels
+          @note: this method is not precise, because it relies on the spare
+          time the device has to scan all the channels
         """
         if self.__intf_name is None:
             return -1, None
 
         # deste jeito esta mandando a mensagem diretamente para a estacao
         server = self.get_connection  # conexao direta com a estacao
-        msg, num_aps, aps = get_ap_in_range(server, id=self.msg_id, intf_name=self.__intf_name)
+        msg, num_aps, aps = get_ap_in_range(server, id=self.msg_id,
+                                            intf_name=self.__intf_name)
         log.debug('get ap_in_range device %d, %f', num_aps, aps)
         return num_aps, aps
 
