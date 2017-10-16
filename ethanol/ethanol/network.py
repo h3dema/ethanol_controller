@@ -106,7 +106,7 @@ class Network(object):
                 raise ValueError("SSID %s already exists!" % self.__SSID)
 
         if ssid in list_of_networks():
-            log.debuf('ssid %s already exists in ')
+            log.debug('ssid %s already exists in ')
 
         self.__id = uuid4()  # random UUID
 
