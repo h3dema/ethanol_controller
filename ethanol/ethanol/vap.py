@@ -41,9 +41,9 @@ class VAP(Device):
         # if not isinstance(ap, AP):
         #   raise ValueError("Parameter is must be a AP class")
 
-        intf_name = radio.wiphy
-        log.info("Creating a VAP in %s interface", intf_name)
-        super(VAP, self).__init__(server, intf_name)
+        self.__intf_name = radio.wiphy
+        log.info("Creating a VAP in %s interface", self.__intf_name)
+        super(VAP, self).__init__(server, self.__intf_name)
 
         self.__server = server  #: saves the reference to server of ap
         self.__mac_address = mac_address  #: virtual ap's mac address
@@ -59,8 +59,7 @@ class VAP(Device):
         self.__ssid = ssid  #: setting ssid will configure VAP
         self.__enabled = False
         self.__mgmtFrame = dict()  # keep a list of listeners for each type of mgmt frame received
-
-        log.info("Created VAP with id:%s in interface %s", self.id, intf_name)
+        log.info("Created VAP with id:%s in interface %s", self.id, self.__intf_name)
 
     def __del__(self):
         ''' destructor: not implemented yet
@@ -76,7 +75,6 @@ class VAP(Device):
             called by station.__init__
         '''
         from pox.ethanol.ethanol.station import Station
-
         if station is None or not isinstance(station, Station):
             return
         self.__list_of_stations.append(station)
