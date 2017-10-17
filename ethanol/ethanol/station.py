@@ -141,7 +141,7 @@ class Station(Device):
     @property
     def radio(self):
         ''' this station is connected to radio,
-          if radio == None the AP is not ethanol enabled
+          if radio is None the AP is not ethanol enabled
         '''
         return self.__radio
 
