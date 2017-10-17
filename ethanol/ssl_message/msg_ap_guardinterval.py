@@ -43,59 +43,59 @@ msg_ap_guardinterval = Struct('msg_ap_guardinterval',
 
 
 def get_ap_guardinterval(server, id=0, intf_name=None):
-  """ get the guard interval set in the interface intf_name
-      @param server: tuple (ip, port_num)
-      @param id: message id
-      @param intf_name: name of the wireless interface
-      @type intf_name: str
+    """ get the guard interval set in the interface intf_name
+        @param server: tuple (ip, port_num)
+        @param id: message id
+        @param intf_name: name of the wireless interface
+        @type intf_name: str
+  
+        @return msg: received message
+        @return value:
+    """
+    if intf_name is None:
+        return None, None
 
-      @return msg: received message
-      @return value:
-  """
-  if intf_name==None:
-    return None, None
+    #1) create message
+    msg_struct = Container(
+        m_type = MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        intf_name_size = 0 if intf_name is None else len(intf_name),
+        intf_name = intf_name,
+        guard_interval = -1,
+    )
+    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse)
+    if not error:
+        value = msg['guard_interval'] if 'guard_interval' in msg else None
+    else:
+        value = None
 
-  #1) create message
-  msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  intf_name_size = 0 if intf_name == None else len(intf_name),
-                  intf_name = intf_name,
-                  guard_interval = -1,
-               )
-  error, msg = send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse)
-  if not error:
-    value = msg['guard_interval'] if 'guard_interval' in msg else None
-  else:
-    value = None
-
-  return msg, value
+    return msg, value
 
 def set_ap_guardinterval(server, id=0, intf_name=None, guard_interval=100):
-  """ set the guard interval of the interface intf_name
-      @param server: tuple (ip, port_num)
-      @param id: message id
-      @param intf_name: name of the wireless interface
-      @type intf_name: str
-      @param guard_interval: time used as guard interval between transmissions
-      @type guard_interval: int
-  """
-  if intf_name==None:
-    return None, None
+    """ set the guard interval of the interface intf_name
+        @param server: tuple (ip, port_num)
+        @param id: message id
+        @param intf_name: name of the wireless interface
+        @type intf_name: str
+        @param guard_interval: time used as guard interval between transmissions
+        @type guard_interval: int
+    """
+    if intf_name is None:
+        return None, None
 
-  #1) create message
-  msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  intf_name_size = 0 if intf_name == None else len(intf_name),
-                  intf_name = intf_name,
-                  guard_interval = guard_interval,
-               )
-  send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse, only_send=True)
+    #1) create message
+    msg_struct = Container(
+        m_type = MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        intf_name_size = 0 if intf_name is None else len(intf_name),
+        intf_name = intf_name,
+        guard_interval = guard_interval,
+    )
+    send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse, only_send=True)
 

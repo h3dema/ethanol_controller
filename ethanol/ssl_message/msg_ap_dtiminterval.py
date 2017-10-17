@@ -43,61 +43,61 @@ msg_ap_dtiminterval = Struct('msg_ap_dtiminterval',
 
 
 def get_ap_dtiminterval(server, id=0, intf_name=None):
-  """ get the DTIM interval set in the interface intf_name
-      @param server: tuple (ip, port_num)
-      @param id: message id
-      @param intf_name: name of the wireless interface
-      @type intf_name: str
+    """ get the DTIM interval set in the interface intf_name
+        @param server: tuple (ip, port_num)
+        @param id: message id
+        @param intf_name: name of the wireless interface
+        @type intf_name: str
+  
+        @return msg: received message
+        @return value:
+    """
+    if intf_name is None:
+        return None, None
 
-      @return msg: received message
-      @return value:
-  """
-  if intf_name==None:
-    return None, None
+    #1) create message
+    msg_struct = Container(
+        m_type = MSG_TYPE.MSG_GET_AP_DTIMINTERVAL,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        intf_name_size = 0 if intf_name is None else len(intf_name),
+        intf_name = intf_name,
+        dtim_interval = -1,
+    )
+    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse)
+    if not error:
+        value = msg['dtim_interval'] if 'dtim_interval' in msg else None
+    else:
+        value = None
 
-  #1) create message
-  msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_GET_AP_DTIMINTERVAL, 
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  intf_name_size = 0 if intf_name == None else len(intf_name),
-                  intf_name = intf_name,
-                  dtim_interval = -1,
-               )
-  error, msg = send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse)
-  if not error:
-    value = msg['dtim_interval'] if 'dtim_interval' in msg else None
-  else:
-    value = None
-
-  return msg, value
+    return msg, value
 
 def set_ap_dtiminterval(server, id=0, intf_name=None, dtim_interval=100):
-  """ set the DTIM interval of the interface intf_name
-      @param server: tuple (ip, port_num)
-      @param id: message id
-      @param intf_name: name of the wireless interface
-      @type intf_name: str
-      @param dtim_interval: DTIM interval
-      @type dtim_interval: int
-      @note: https://routerguide.net/dtim-interval-period-best-setting/
+    """ set the DTIM interval of the interface intf_name
+        @param server: tuple (ip, port_num)
+        @param id: message id
+        @param intf_name: name of the wireless interface
+        @type intf_name: str
+        @param dtim_interval: DTIM interval
+        @type dtim_interval: int
+        @note: https://routerguide.net/dtim-interval-period-best-setting/
+  
+    """
+    if intf_name is None:
+        return None, None
 
-  """
-  if intf_name==None:
-    return None, None
-
-  #1) create message
-  msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_SET_AP_DTIMINTERVAL, 
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  intf_name_size = 0 if intf_name == None else len(intf_name),
-                  intf_name = intf_name,
-                  dtim_interval = dtim_interval,
-               )
-  send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse, only_send=True)
+    #1) create message
+    msg_struct = Container(
+        m_type = MSG_TYPE.MSG_SET_AP_DTIMINTERVAL,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        intf_name_size = 0 if intf_name is None else len(intf_name),
+        intf_name = intf_name,
+        dtim_interval = dtim_interval,
+    )
+    send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse, only_send=True)
 

@@ -131,6 +131,7 @@ class VAP(Device):
             # changing networks (SSIDs)
             self.__net.deassociateVirtualAP(self)
             # new net
+            from pox.ethanol.ethanol.network import get_or_create_network_by_ssid
             self.__net = get_or_create_network_by_ssid(ssid)
             self.__net.associateVirtualAP(self)
             self.__ssid = ssid
@@ -149,8 +150,9 @@ class VAP(Device):
     def broadcastSSID(self, value):
         '''not implemented yet'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_broadcastssid import get_broadcastssid
+        msg, value = get_broadcastssid(server=server, id=self.id, intf_name=self.__intf_name, ssid=self.__ssid)
+        return value
 
     @property
     def fastBSSTransitionEnabled(self):
@@ -182,31 +184,35 @@ class VAP(Device):
 
     @property
     def frameBurstEnabled(self):
-        '''not implemented yet'''
+        ''':return if AP has frame burst feature enabled'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_frameburstenabled import get_ap_frameburstenabled
+        msg, value = get_ap_frameburstenabled(server=server, id=self.id, intf_name=self.__intf_name)
+        return value
 
     @property
     def guardInterval(self):
-        '''not implemented yet'''
+        ''':return Guard Interval'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_guardinterval import get_ap_guardinterval
+        msg, value = get_ap_guardinterval(server=server, id=self.id, intf_name=self.__intf_name)
+        return value
 
     @property
     def dtimInterval(self):
-        '''not implemented yet'''
+        ''':return DTIM interval'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_dtiminterval import get_ap_dtiminterval
+        msg, value = get_ap_dtiminterval(server=server, id=self.id, intf_name=self.__intf_name)
+        return value
 
     @property
     def ctsProtection_enabled(self):
         '''not implemented yet'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_ctsprotection_enabled import get_ctsprotection_enabled
+        msg, value = get_ctsprotection_enabled(server=server, id=self.id, intf_name=self.__intf_name)
+        return value
 
     @property
     def rtsThreshold(self):

@@ -39,7 +39,7 @@ msg_ap_broadcastssid = Struct('msg_ap_broadcastssid',
                               )
 
 
-def get_broadcastssid(server, id=0, intf_name=None):
+def get_broadcastssid(server, id=0, intf_name=None, ssid=None):
     """ verify is the interface is broadcasting the SSID
         @param server: tuple (ip, port_num)
         @param id: message id
@@ -49,7 +49,7 @@ def get_broadcastssid(server, id=0, intf_name=None):
         @return msg: received message
         @return value:
     """
-    if intf_name is None:
+    if intf_name is None or ssid is None:
         return None, None
 
     #1) create message
@@ -58,9 +58,9 @@ def get_broadcastssid(server, id=0, intf_name=None):
                            p_version_length=len(VERSION),
                            p_version = VERSION,
                            m_size = 0,
-                           intf_name_size = 0 if intf_name == None else len(intf_name),
+                           intf_name_size = 0 if intf_name is None else len(intf_name),
                            intf_name = intf_name,
-                           ssid_size = 0 if ssid == None else len(ssid),
+                           ssid_size = 0 if ssid is None else len(ssid),
                            ssid = ssid,
                            enabled = False,
                            )
@@ -72,7 +72,7 @@ def get_broadcastssid(server, id=0, intf_name=None):
 
     return msg, value
 
-def set_broadcastssid(server, id=0, intf_name=None, enable=False):
+def set_broadcastssid(server, id=0, intf_name=None, enable=False, ssid=None):
   """ enable or disable the broadcasting of the SSID
         @param server: tuple (ip, port_num)
       @param id: message id
@@ -81,7 +81,7 @@ def set_broadcastssid(server, id=0, intf_name=None, enable=False):
       @param enable: set if the SSID should be broadcasted or if it is a hidden SSID
       @param enable: bool
   """
-  if intf_name is None:
+  if intf_name is None or ssid is None:
       return None, None
 
   #1) create message
@@ -90,9 +90,9 @@ def set_broadcastssid(server, id=0, intf_name=None, enable=False):
                          p_version_length=len(VERSION),
                          p_version = VERSION,
                          m_size = 0,
-                         intf_name_size = 0 if intf_name == None else len(intf_name),
+                         intf_name_size = 0 if intf_name is None else len(intf_name),
                          intf_name = intf_name,
-                         ssid_size = 0 if ssid == None else len(ssid),
+                         ssid_size = 0 if ssid is None else len(ssid),
                          ssid = ssid,
                          enabled = enable,
                          )
