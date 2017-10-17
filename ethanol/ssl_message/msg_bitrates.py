@@ -23,10 +23,10 @@ no process is implemented: the controller is not supposed to respond to these me
 @requires: construct 2.5.2
 """
 
-from construct import ULInt32, SLInt32, LFloat32, ULInt8
+from construct import ULInt32, LFloat32, ULInt8
 from construct import Embed
 from construct import Array, Struct, Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
 from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields
 from pox.ethanol.ssl_message.msg_core   import field_intf_name
@@ -36,16 +36,16 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 iw_bitrates = Struct('iw_bitrates',
-                       LFloat32("bitrate"),
-                       ULInt8('is_short'), # this is a boolean coded as a byte
+                     LFloat32("bitrate"),
+                     ULInt8('is_short'), # this is a boolean coded as a byte
                      )
 
 iw_bands = Struct('iw_bands',
-                      Embed(field_intf_name),
-                      ULInt32('band'),
-                      ULInt32('num_bitrates'),
-                      #Probe(),
-                      Array(lambda ctx: ctx.num_bitrates, iw_bitrates),
+                  Embed(field_intf_name),
+                  ULInt32('band'),
+                  ULInt32('num_bitrates'),
+                  # Probe(),
+                  Array(lambda ctx: ctx.num_bitrates, iw_bitrates),
                   )
 
 msg_tx_bitrates = Struct('msg_tx_bitrates',
@@ -53,7 +53,7 @@ msg_tx_bitrates = Struct('msg_tx_bitrates',
                     Embed(field_intf_name),
                     Embed(field_station),
                     ULInt32('num_bands'),
-                    #Probe(),
+                    # Probe(),
                     Array(lambda ctx: ctx.num_bands, iw_bands),
                 )
 

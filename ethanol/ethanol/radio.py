@@ -30,8 +30,7 @@ from pox.ethanol.ssl_message.msg_channels import get_channels, \
     get_currentchannel, set_currentchannel
 from pox.ethanol.ssl_message.msg_wlan_info import req_wlan_info
 from pox.ethanol.ssl_message.msg_enabled import is_fastbsstransition_compatible
-from pox.ethanol.ssl_message.msg_preamble import get_preamble
-# , set_preamble
+from pox.ethanol.ssl_message.msg_preamble import get_preamble, set_preamble
 from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrates
 from pox.ethanol.ssl_message.msg_channelinfo import get_channelinfo
 from pox.ethanol.ssl_message.msg_acs import get_acs
@@ -39,7 +38,7 @@ from pox.ethanol.ssl_message.msg_interfaces import get_interfaces
 from pox.ethanol.ssl_message.msg_powersave import \
     set_powersave_mode, get_powersave_mode
 from pox.ethanol.ssl_message.msg_log import log
-
+from pox.ethanol.ssl_message.msg_beacon_interval import get_beacon_interval, set_beacon_interval
 
 class Radio(object):
     """
@@ -255,16 +254,14 @@ class Radio(object):
           set new preamble, returns nothing
         """
         server = self.__get_connection()
-        set_ap_preamble_req(server, id=self.msg_id,
-                            intf_name=self.__wiphy_name, preamble=value)
+        set_preamble(server, id=self.msg_id, intf_name=self.__wiphy_name, preamble=value)
         log.debug("preamble set to %d", value)
 
     @property
     def beaconInterval(self):
         """connect to ap requesting beacon interval value"""
         server = self.__get_connection()
-        msg, value = get_beacon_interval(server, id=self.msg_id,
-                                         intf_name=self.__wiphy_name)
+        msg, value = get_beacon_interval(server, id=self.msg_id, intf_name=self.__wiphy_name)
         log.debug("beacon interval: %d", value)
         return value
 

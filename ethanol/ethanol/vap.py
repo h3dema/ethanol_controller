@@ -324,3 +324,9 @@ class VAP(Device):
             transfer information about a station from old_ap to this ap
         '''
         pass
+
+    def connected_stations(self):
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_sta_statistics import get_sta_statistics
+        msg, stats = get_sta_statistics(server, id=self.msg_id, intf_name=self.__intf_name)
+        return stats
