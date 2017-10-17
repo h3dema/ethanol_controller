@@ -90,32 +90,32 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
 
 
 def deal_with_client(connstream, fromaddr):
-  """ this function is called as a Thread to manage each connection
-      
-      @param connstream:
-      @param fromaddr:
-  """
-  # read data from client
-  received_msg = connstream.read(65536)
+    """ this function is called as a Thread to manage each connection
 
-  # decode message
-  msg = decode_default_fields(received_msg)
-  m_type = msg['m_type']
-  #To print the messages received on controler 
-  #print "msg recebida - tipo:", m_type
-  if m_type in map_msg_to_procedure:
-    # switch...case to deal with each kind of message
-    func = map_msg_to_procedure[msg.m_type]
-    reply = func(received_msg, fromaddr)
-  else:
-    reply = return_error_msg_struct(msg.id)
+        @param connstream:
+        @param fromaddr:
+    """
+    # read data from client
+    received_msg = connstream.read(65536)
 
-  # reply to client, if necessary
-  if None != reply:
-    num_bytes = connstream.write(reply)
+    # decode message
+    msg = decode_default_fields(received_msg)
+    m_type = msg['m_type']
+    #To print the messages received on controler
+    #print "msg recebida - tipo:", m_type
+    if m_type in map_msg_to_procedure:
+        # switch...case to deal with each kind of message
+        func = map_msg_to_procedure[msg.m_type]
+        reply = func(received_msg, fromaddr)
+    else:
+        reply = return_error_msg_struct(msg.id)
 
-  # finished with client
-  connstream.close()
+    # reply to client, if necessary
+    if None != reply:
+        num_bytes = connstream.write(reply)
+
+    # finished with client
+    connstream.close()
 
 DEFAULT_CERT_PATH = os.path.dirname(os.path.abspath(__file__))
 """path to the ssl certificate used in the secure socket connections"""
@@ -123,38 +123,38 @@ SSL_CERTIFICATE = DEFAULT_CERT_PATH + '/mycert.pem'
 """path and default name of the ssl certificate"""
 
 def run(server):
-  """ to use this module only call this method, providing a tuple with (server ip address, server port)
-     @param server: (ip, port) tuple
-  """
-  # check if certificate exists
-  if not os.path.exists(SSL_CERTIFICATE):
-    print "Cannot run server without the certificate: %s" % SSL_CERTIFICATE
-    print "Fatal error..exiting now"
-    return -1
-  else:
-    # socket
-    bindsocket = socket.socket()
-    bindsocket.bind(server)
-    bindsocket.listen(5) # specifies the maximum number of queued connections
-    while True:
-      try:
-        newsocket, fromaddr = bindsocket.accept()
-        connstream = ssl.wrap_socket(newsocket,
-                                    server_side=True,
-                                    certfile=SSL_CERTIFICATE, # load certs 
-                                    keyfile=SSL_CERTIFICATE,
-                                    ssl_version=ssl.PROTOCOL_SSLv3) # same as ssl_server.c
-        """ deal without a thread """
-        # deal_with_client(connstream, fromaddr)
-        """ deal with the request in a thread, so multiple connections can be served """
-        t = Thread(target=deal_with_client, args=(connstream, fromaddr))
-        t.start()
-      except:
-        error_found = sys.exc_info()[0]
-        print "Error: ", error_found
+    """ to use this module only call this method, providing a tuple with (server ip address, server port)
+       @param server: (ip, port) tuple
+    """
+    # check if certificate exists
+    if not os.path.exists(SSL_CERTIFICATE):
+        print "Cannot run server without the certificate: %s" % SSL_CERTIFICATE
+        print "Fatal error..exiting now"
+        return -1
+    else:
+        # socket
+        bindsocket = socket.socket()
+        bindsocket.bind(server)
+        bindsocket.listen(5) # specifies the maximum number of queued connections
+        while True:
+            try:
+                newsocket, fromaddr = bindsocket.accept()
+                connstream = ssl.wrap_socket(newsocket,
+                                             server_side=True,
+                                             certfile=SSL_CERTIFICATE, # load certs
+                                             keyfile=SSL_CERTIFICATE,
+                                             ssl_version=ssl.PROTOCOL_SSLv3) # same as ssl_server.c
+                """ deal without a thread """
+                # deal_with_client(connstream, fromaddr)
+                """ deal with the request in a thread, so multiple connections can be served """
+                t = Thread(target=deal_with_client, args=(connstream, fromaddr))
+                t.start()
+            except:
+                error_found = sys.exc_info()[0]
+                print "Error: ", error_found
 
-  return 0
+    return 0
 
 if __name__ == "__main__":
-  server=('localhost', SERVER_PORT) # SERVER_PORT
-  run(server)
+    server=('localhost', SERVER_PORT) # SERVER_PORT
+    run(server)

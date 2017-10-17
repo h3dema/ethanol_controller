@@ -188,6 +188,7 @@ class Station(Device):
         @param new_ap: MAC address of the new AP
         '''
         server = self.get_connection
+        from pox.ethanol.ssl_message.msg_station_trigger_transition import station_trigger_transition
         station_trigger_transition(server, self.msg_id,
                                    sta_mac=self.mac_address,
                                    intf_name=self.intf_name,

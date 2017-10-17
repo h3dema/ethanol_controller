@@ -32,38 +32,38 @@ from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 from pox.ethanol.ethanol.ap import add_ap
 
 msg_uptime = Struct('msg_uptime',
-                        Embed(msg_default),   # default fields
-                        LFloat64('uptime'),
-                        LFloat64('idle'),
-                        #Probe()
+                    Embed(msg_default),   # default fields
+                    LFloat64('uptime'),
+                    LFloat64('idle'),
+                    #Probe()
                     )
 """ message structure common to all supported_messages messages"""
 
 def get_uptime(server, id=0):
-  """ get uptime
+    """ get uptime
 
-    @param server: tuple (ip, port_num)
-    @param id: message id
+      @param server: tuple (ip, port_num)
+      @param id: message id
 
-    @return: msg - received message
-        value (bytes or packets received or sent or lost)
-  """
-  msg_struct = Container(
-                  m_type = type,
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  uptime = 0,
-                  idle = 0,
-               )
+      @return: msg - received message
+          value (bytes or packets received or sent or lost)
+    """
+    msg_struct = Container(
+        m_type = type,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        uptime = 0,
+        idle = 0,
+    )
 
-  error, msg = send_and_receive_msg(server, msg_struct, msg_uptime.build, msg_uptime.parse)
-  if not error:
-    uptime = msg['uptime'] if 'uptime' in msg else -1
-    idle = msg['idle'] if 'idle' in msg else -1
-  else:
-    uptime = -1
-    idle = -1
+    error, msg = send_and_receive_msg(server, msg_struct, msg_uptime.build, msg_uptime.parse)
+    if not error:
+        uptime = msg['uptime'] if 'uptime' in msg else -1
+        idle = msg['idle'] if 'idle' in msg else -1
+    else:
+        uptime = -1
+        idle = -1
 
-  return msg, uptime, idle
+    return msg, uptime, idle

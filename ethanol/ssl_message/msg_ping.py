@@ -52,89 +52,89 @@ msg_pong = Struct('msg_pong',
 
 BYTE_INICIAL=48
 def generate_ping_data(p_size=64):
-  data = '';
-  for i in range(p_size):
-    data += chr((BYTE_INICIAL + i) % 128) # 7-bit ASCII
-  data += chr(0)
-  return data;
+    data = '';
+    for i in range(p_size):
+        data += chr((BYTE_INICIAL + i) % 128) # 7-bit ASCII
+    data += chr(0)
+    return data;
 
 def verify_data(data, p_size):
-  """
-    check if the payload received is correct
-  """
-  data_to_check = generate_ping_data(p_size)
-  # ok = (data.find(data_to_check) == 0) and (len(data_to_check) == len(data))
-  return data_to_check == data
+    """
+      check if the payload received is correct
+    """
+    data_to_check = generate_ping_data(p_size)
+    # ok = (data.find(data_to_check) == 0) and (len(data_to_check) == len(data))
+    return data_to_check == data
 
 
 def send_msg(server, msg):
-  """ sends a message PING msg to the server
-      @param server: tuple (ip, port) used to socket connect to the client
-      @param msg: message to be sent (ping or pong)
-  """
-  ssl_sock = connect_ssl_socket(server)
+    """ sends a message PING msg to the server
+        @param server: tuple (ip, port) used to socket connect to the client
+        @param msg: message to be sent (ping or pong)
+    """
+    ssl_sock = connect_ssl_socket(server)
 
-  t0 = datetime.now()
-  num_bytes=ssl_sock.write(msg)
+    t0 = datetime.now()
+    num_bytes=ssl_sock.write(msg)
 
-  #3) retrieve server's response
-  received_msg=ssl_sock.read(BUFFER_SIZE)
-  t1 = datetime.now()
-  ssl_sock.close()
-  if is_error_msg(received_msg):
-    return None
-  else:
-    msg = msg_pong.parse(received_msg)
-    msg.rtt = t1 - t0
-    return msg
+    #3) retrieve server's response
+    received_msg=ssl_sock.read(BUFFER_SIZE)
+    t1 = datetime.now()
+    ssl_sock.close()
+    if is_error_msg(received_msg):
+        return None
+    else:
+        msg = msg_pong.parse(received_msg)
+        msg.rtt = t1 - t0
+        return msg
 
 
 def send_msg_ping(server, id=0, num_tries=1, p_size=64):
-  """ send a ping message to other ethanol device (mainly to the controller)
-      and receives a pong response
-      @param server: tuple (ip, port_num)
-      @param id: message id
-      @param num_tries: number of message retries before quitting
-      @param p_size: payload size (extra size in bytes added to the message)
-      @return: all messages sent
-  """
-  #1) create message
-  msg_struct = Container(
-                m_type = MSG_TYPE.MSG_PING,
-                m_id = id,
-                p_version_length=len(VERSION),
-                p_version = VERSION,
-                m_size = 0,
-                data_size = p_size
-              )
-  msg_struct.data = generate_ping_data(p_size)
+    """ send a ping message to other ethanol device (mainly to the controller)
+        and receives a pong response
+        @param server: tuple (ip, port_num)
+        @param id: message id
+        @param num_tries: number of message retries before quitting
+        @param p_size: payload size (extra size in bytes added to the message)
+        @return: all messages sent
+    """
+    #1) create message
+    msg_struct = Container(
+        m_type = MSG_TYPE.MSG_PING,
+        m_id = id,
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        data_size = p_size
+    )
+    msg_struct.data = generate_ping_data(p_size)
 
-  ret = []
-  for i in range(num_tries):
-    msg = msg_ping.build(msg_struct)
-    msg = send_msg(server, msg)
-    if msg is not None:
-      verify_data = tri_boolean('verify_data', msg)
-      msg['verify_data'] = verify_data
-      ret.append(msg)
-    msg_struct.m_id = msg_struct.m_id + 1
+    ret = []
+    for i in range(num_tries):
+        msg = msg_ping.build(msg_struct)
+        msg = send_msg(server, msg)
+        if msg is not None:
+            verify_data = tri_boolean('verify_data', msg)
+            msg['verify_data'] = verify_data
+            ret.append(msg)
+        msg_struct.m_id = msg_struct.m_id + 1
 
-  return ret
+    return ret
 
 def process_msg_ping(received_msg, fromaddr):
-  """ grabs the ping message, verifies the data field and returns a pong message
-  """
-  msg = msg_ping.parse(received_msg)
-  msg['data'] += chr(0) # add "\0" at the end of this field, to transform it into a C string
-  #print "process_msg_ping - parse", msg
+    """ grabs the ping message, verifies the data field and returns a pong message
+    """
+    msg = msg_ping.parse(received_msg)
+    msg['data'] += chr(0) # add "\0" at the end of this field, to transform it into a C string
+    #print "process_msg_ping - parse", msg
 
-  result = Container(
-                m_type = MSG_TYPE.MSG_PONG,
-                m_id = msg['m_id'],
-                p_version_length=len(VERSION),
-                p_version = VERSION,
-                m_size = 0,
-                rtt = 0,
-                verify_data = verify_data(msg['data'], msg['data_size'])
-               )
-  return msg_pong.build(result)
+    result = Container(
+        m_type = MSG_TYPE.MSG_PONG,
+        m_id = msg['m_id'],
+        p_version_length=len(VERSION),
+        p_version = VERSION,
+        m_size = 0,
+        rtt = 0,
+        verify_data = verify_data(msg['data'], msg['data_size'])
+    )
+    return msg_pong.build(result)

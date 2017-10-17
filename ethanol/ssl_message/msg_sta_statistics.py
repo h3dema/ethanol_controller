@@ -19,14 +19,14 @@ no process is implemented: the controller is not supposed to respond to these me
 @requires: construct 2.5.2
 """
 
-from construct import SLInt32, SLInt64, CString
+from construct import SLInt32, SLInt64, CString, LFloat32
 from construct import Embed, If
 from construct import Struct, Array
 from construct import Container
 # from construct.debug import Probe
 
 from pox.ethanol.ssl_message.msg_core import msg_default
-from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name
+from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
@@ -37,9 +37,9 @@ field_time_stamp = Struct('time_stamp',
                           )
 
 stats_field = Struct('stats',
-                     # char * mac_addr;
-                     # char * intf_name;
-                     # long inactive_time'),
+                     Embed(field_mac_addr),
+                     Embed(field_intf_name),
+                     SLInt32('inactive_time'),  # long
                      SLInt64('rx_bytes'),
                      SLInt64('tx_bytes'),
                      SLInt64('rx_packets'),
@@ -55,7 +55,7 @@ stats_field = Struct('stats',
                      SLInt32('beacon_signal_avg'),
                      SLInt64('time_offset'),
                      SLInt64('connected_time'),
-                     # float tx_bitrate;
+                     LFloat32('tx_bitrate'),
                      )
 
 

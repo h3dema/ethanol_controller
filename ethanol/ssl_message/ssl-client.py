@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
-
   implementação de ssl-client.c em python
-
 '''
 import ssl
 from socket import socket, AF_INET, SOCK_STREAM
@@ -25,9 +23,9 @@ server = ("localhost", SERVER_PORT)
 num_tries = randint(1, 5)
 print "enviando %d mensagem(s) de hello" % num_tries
 for i in range(num_tries):
-  print "envio de Hello #%d" % i
-  ret = send_msg_hello(server, i)
-  print "resposta: ", ret.m_id, ret.rtt
+    print "envio de Hello #%d" % i
+    ret = send_msg_hello(server, i)
+    print "resposta: ", ret.m_id, ret.rtt
 print "\n\n\n"
 
 '''
@@ -38,4 +36,4 @@ pckt_size = randint(64, 512)
 print "enviando %d pings de %d bytes" % (num_tries, pckt_size)
 ret = send_msg_ping(server, id=1, num_tries=num_tries, p_size=pckt_size)
 for p in ret:
-  print p.m_id, p.rtt
+    print p.m_id, p.rtt

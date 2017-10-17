@@ -47,8 +47,8 @@ def set_msg_mtu_qlen(server, m_type, m_id=0, sta_ip=None, sta_port=0, intf_name=
     @param intf_name: name of the interface
     """
     if intf_name is None or \
-       m_type not in [MSG_TYPE.MSG_SET_TXQUEUELEN, MSG_TYPE.MSG_SET_MTU] or \
-       not isinstance(value, int):
+                    m_type not in [MSG_TYPE.MSG_SET_TXQUEUELEN, MSG_TYPE.MSG_SET_MTU] or \
+            not isinstance(value, int):
         return
 
     msg_struct = Container(m_type=m_type,

@@ -82,8 +82,8 @@ def __msg_tos(server, m_type, msg_id=0, rule_id=-1, intf_name=None,
     """ internal use only
     """
     if (rule_id < 1 and rule_id != -1) or (intf_name is None) or \
-       (proto is None) or (wmm_class not in range(8)) or \
-       (m_type not in [MSG_TYPE.MSG_TOS_ADD, MSG_TYPE.MSG_TOS_REPLACE]):
+            (proto is None) or (wmm_class not in range(8)) or \
+            (m_type not in [MSG_TYPE.MSG_TOS_ADD, MSG_TYPE.MSG_TOS_REPLACE]):
         return
 
     msg_struct = Container(m_type=m_type,
