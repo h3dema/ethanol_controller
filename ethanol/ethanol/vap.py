@@ -216,10 +216,11 @@ class VAP(Device):
 
     @property
     def rtsThreshold(self):
-        '''not implemented yet'''
+        '''get RTS threshold, if 0 RTS/CTS is not used'''
         server = self.__get_connection()
-        # TODO: get information from physical device
-        pass
+        from pox.ethanol.ssl_message.msg_ap_rtsthreshold import get_ap_rtsthreshold
+        msg, value = get_ap_rtsthreshold(server=server, id=self.id, intf_name=self.__intf_name)
+        return value
 
     def getStationInRange(self):
         '''not implemented yet'''
@@ -297,13 +298,13 @@ class VAP(Device):
         if msg_type not in self.__mgmtFrame or len(self.__mgmtFrame[msg_type]) == 0:
             return False
         else:
-            for listener in self.__mgmtFrame[msg_type]:
-                listener(msg)  # call
+            self.__mgmtFrame[msg_type].on_change(msg)
 
     def registerMgmtFrame(self, msg_type, listener):
         server = self.__get_connection()
         if msg_type not in self.__mgmtFrame or len(self.__mgmtFrame[msg_type]) == 0:
-            self.__mgmtFrame[msg_type] = set([listener])
+            self.__mgmtFrame[msg_type] = Events()
+            self.__mgmtFrame[msg_type].on_change += listener
             # register function in the AP
             # register this object in the message processor
         else:
