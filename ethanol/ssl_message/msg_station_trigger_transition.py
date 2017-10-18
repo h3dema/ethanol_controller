@@ -25,7 +25,8 @@ from construct import Struct
 from construct import Container, If
 from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, field_mac_addr, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_mac_addr, field_intf_name, \
+    field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
@@ -40,18 +41,18 @@ field_mac_new_ap = Struct('mac_new_ap',
 """ handles a mac address field for the new ap (a C char * field)
 """
 
-
 msg_station_trigger_transition = Struct('msg_station_trigger_transition',
-                                        Embed(msg_default),     # default fields
+                                        Embed(msg_default),  # default fields
                                         Embed(field_station),
-                                        Embed(field_mac_addr),    # mac_sta
-                                        Embed(field_intf_name),   # intf_name
+                                        Embed(field_mac_addr),  # mac_sta
+                                        Embed(field_intf_name),  # intf_name
                                         Embed(field_mac_new_ap),  # mac_new_ap
-                                        #Probe()
+                                        # Probe()
                                         )
 """ message structure common to all supported_messages messages"""
 
-def station_trigger_transition(server, id=0, sta_ip=None, sta_port = 0, sta_mac=None, intf_name=None, mac_new_ap=None):
+
+def station_trigger_transition(server, id=0, sta_ip=None, sta_port=0, sta_mac=None, intf_name=None, mac_new_ap=None):
     """ sendo command to station to change to a new ap
 
       @param server: tuple (ip, port_num)
@@ -59,11 +60,11 @@ def station_trigger_transition(server, id=0, sta_ip=None, sta_port = 0, sta_mac=
 
     """
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_TRIGGER_TRANSITION,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_TRIGGER_TRANSITION,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
+        p_version=VERSION,
+        m_size=0,
         sta_ip_size=len(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
@@ -74,4 +75,5 @@ def station_trigger_transition(server, id=0, sta_ip=None, sta_port = 0, sta_mac=
         mac_new_ap_size=len(mac_new_ap),
         mac_new_ap=mac_new_ap,
     )
-    error, msg = send_and_receive_msg(server, msg_struct, msg_station_trigger_transition.build, msg_station_trigger_transition.parse, only_send=True)
+    error, msg = send_and_receive_msg(server, msg_struct, msg_station_trigger_transition.build,
+                                      msg_station_trigger_transition.parse, only_send=True)

@@ -30,7 +30,6 @@ from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, fie
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
-
 field_time_stamp = Struct('time_stamp',
                           SLInt32('time_stamp_size'),
                           If(lambda ctx: ctx["time_stamp_size"] > 0, CString("time_stamp")),
@@ -58,9 +57,8 @@ stats_field = Struct('stats',
                      LFloat32('tx_bitrate'),
                      )
 
-
 msg_sta_statistics = Struct('msg_sta_statistics',
-                            Embed(msg_default),   # default fields
+                            Embed(msg_default),  # default fields
                             Embed(field_intf_name),
                             Embed(field_station),
                             SLInt32('num_stats'),

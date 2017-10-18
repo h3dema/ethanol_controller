@@ -18,10 +18,10 @@ USING_POX = False
 """if true, then pox logs our module messages"""
 
 if USING_POX:
-  from pox.core import core
-  log = core.getLogger()
+    from pox.core import core
+    log = core.getLogger()
 else:
-  import logging
-  log = logging
-  log.basicConfig(level=log.INFO)
+    import logging
 
+    log = logging
+    log.basicConfig(level=log.INFO)

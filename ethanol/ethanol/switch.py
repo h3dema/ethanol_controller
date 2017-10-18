@@ -10,7 +10,9 @@
 # ##################################
 #
 
-'''  An L2 learning switch '''
+"""  An L2 learning switch
+     based on L2 learning example from POX
+"""
 
 from pox.core import core
 import pox.openflow.libopenflow_01 as of

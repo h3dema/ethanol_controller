@@ -32,18 +32,18 @@ from pox.ethanol.ethanol.ap import add_ap
 from pox.ethanol.ethanol.station import add_station
 
 from pox.ethanol.events import Events
+
 events_hello = Events()
 """to handle a receiving hello message, just add your function to events_hello
    your function must use 'def my_funct(**kwargs)' signature for compatibility
    @change: we send to parameters: msg, fromaddr
 """
 
-
 msg_hello = Struct('msg_hello',
-                   Embed(msg_default),   # default fields
+                   Embed(msg_default),  # default fields
                    SLInt32('device_type'),  # 0 = controller, 1 = ap, 2 = station
                    SLInt32('tcp_port'),
-                   LFloat32('rtt')       # float com 32 bits
+                   LFloat32('rtt')  # float com 32 bits
                    )
 
 
@@ -125,5 +125,6 @@ def bogus_hello_on_change(**kwargs):
     else:
         print
 
-#add a bogus procedure
+
+# add a bogus procedure
 events_hello.on_change += bogus_hello_on_change

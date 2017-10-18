@@ -33,7 +33,7 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_rtsthreshold = Struct('msg_ap_rtsthreshold',
-                             Embed(msg_default),   # default fields
+                             Embed(msg_default),  # default fields
                              Embed(field_intf_name),
                              ULInt32('rts_threshold'),
                              # Probe(),
@@ -51,16 +51,16 @@ def get_ap_rtsthreshold(server, id=0, intf_name=None):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        rts_threshold = 0,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        rts_threshold=0,
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_ap_rtsthreshold.build, msg_ap_rtsthreshold.parse)
     if not error:
@@ -69,6 +69,7 @@ def get_ap_rtsthreshold(server, id=0, intf_name=None):
         value = None
 
     return msg, value
+
 
 def set_ap_rtsthreshold(server, id=0, intf_name=None, rts_threshold=0):
     """ enable or disable the broadcasting of the SSID
@@ -80,15 +81,15 @@ def set_ap_rtsthreshold(server, id=0, intf_name=None, rts_threshold=0):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        rts_threshold = rts_threshold,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        rts_threshold=rts_threshold,
     )
     send_and_receive_msg(server, msg_struct, msg_ap_rtsthreshold.build, msg_ap_rtsthreshold.parse, only_send=True)

@@ -35,18 +35,18 @@ from construct import Struct
 from construct import Container
 from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 from pox.ethanol.ethanol.ap import add_ap
 
 msg_sent_received = Struct('msg_sent_received',
-                           Embed(msg_default),   # default fields
+                           Embed(msg_default),  # default fields
                            Embed(field_intf_name),
                            Embed(field_station),
                            SLInt64('value'),
-                           #Probe()
+                           # Probe()
                            )
 """ message structure common to all supported_messages messages"""
 
@@ -59,6 +59,7 @@ supported_messages = [
 ]
 """ this module deals with multiple message types. these types are listed in supported_messages 
 """
+
 
 def send_msg_sent_received(server, id=0, type=None, intf_name=None, sta_ip=None, sta_port=0):
     """ INTERNAL FUNCTION: don't call this function
@@ -76,21 +77,21 @@ def send_msg_sent_received(server, id=0, type=None, intf_name=None, sta_ip=None,
           value (bytes or packets received or sent or lost)
     """
     if (type == None) or (type not in supported_messages):
-        return None, value # nothing to do if the message type is not defined
+        return None, value  # nothing to do if the message type is not defined
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = type,
-        m_id = id,
+        m_type=type,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name == None else len(intf_name),
-        intf_name = intf_name,
-        sta_ip_size = 0 if sta_ip == None else len(sta_ip),
-        sta_ip = sta_ip,
-        sta_port = sta_port,
-        value = 0
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        value=0
     )
 
     error, msg = send_and_receive_msg(server, msg_struct, msg_sent_received.build, msg_sent_received.parse)
@@ -100,6 +101,7 @@ def send_msg_sent_received(server, id=0, type=None, intf_name=None, sta_ip=None,
         value = -1
 
     return msg, value
+
 
 def send_msg_get_bytesreceived(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ requests number of bytes received. this number is always incremented since the interface activation
@@ -118,6 +120,7 @@ def send_msg_get_bytesreceived(server, id=0, intf_name=None, sta_ip=None, sta_po
                                   type=MSG_TYPE.MSG_GET_BYTESRECEIVED,
                                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
 
+
 def send_msg_get_bytessent(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ requests number of bytes sent by the interface. this number is always incremented since the interface activation
       @param server: tuple (ip, port_num)
@@ -134,6 +137,7 @@ def send_msg_get_bytessent(server, id=0, intf_name=None, sta_ip=None, sta_port=0
     return send_msg_sent_received(server=server, id=id,
                                   type=MSG_TYPE.MSG_GET_BYTESSENT,
                                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
+
 
 def send_msg_get_packetsreceived(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ requests number of packets received by the interface. this number is always incremented since the interface activation
@@ -152,6 +156,7 @@ def send_msg_get_packetsreceived(server, id=0, intf_name=None, sta_ip=None, sta_
                                   type=MSG_TYPE.MSG_GET_PACKETSRECEIVED,
                                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
 
+
 def send_msg_get_packetssent(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ requests number of packets sent by the interface. this number is always incremented since the interface activation
       @param server: tuple (ip, port_num)
@@ -168,6 +173,7 @@ def send_msg_get_packetssent(server, id=0, intf_name=None, sta_ip=None, sta_port
     return send_msg_sent_received(server=server, id=id,
                                   type=MSG_TYPE.MSG_GET_PACKETSSENT,
                                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
+
 
 def send_msg_get_packetslost(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ requests number of packets lost by the interface. this number is always incremented since the interface activation

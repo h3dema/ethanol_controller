@@ -26,7 +26,7 @@ from construct import Container
 from construct.debug import Probe
 from decimal import Decimal
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
@@ -40,7 +40,7 @@ field_time_stamp = Struct('time_stamp',
                           )
 
 msg_statistics = Struct('msg_statistics',
-                        Embed(msg_default),   # default fields
+                        Embed(msg_default),  # default fields
                         Embed(field_intf_name),
                         Embed(field_station),
                         SLInt64('rx_packets'),
@@ -52,12 +52,13 @@ msg_statistics = Struct('msg_statistics',
                         SLInt64('tx_dropped'),
                         SLInt64('tx_errors'),
                         Embed(field_time_stamp),
-                        #Probe()
+                        # Probe()
                         )
 """ message structure common to all supported statistics messages"""
 
 """ this module deals with multiple message types. these types are listed in supported_messages
 """
+
 
 def send_msg_get_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     """ INTERNAL FUNCTION
@@ -75,36 +76,35 @@ def send_msg_get_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=
 
       @return: msg - received message
     """
-    if intf_name==None:
+    if intf_name == None:
         return None, -1, -1, -1, -1, -1, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_STATISTICS,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_STATISTICS,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name == None else len(intf_name),
-        intf_name = intf_name,
-        sta_ip_size = 0 if sta_ip == None else len(sta_ip),
-        sta_ip = sta_ip,
-        sta_port = sta_port,
-        rx_packets = 0,
-        rx_bytes = 0,
-        rx_dropped = 0,
-        rx_errors = 0,
-        tx_packets = 0,
-        tx_bytes = 0,
-        tx_dropped = 0,
-        tx_errors = 0,
-        time_stamp_size = 0,
-        time_stamp = None,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        rx_packets=0,
+        rx_bytes=0,
+        rx_dropped=0,
+        rx_errors=0,
+        tx_packets=0,
+        tx_bytes=0,
+        tx_dropped=0,
+        tx_errors=0,
+        time_stamp_size=0,
+        time_stamp=None,
     )
 
-
     error, msg = send_and_receive_msg(server, msg_struct, msg_statistics.build, msg_statistics.parse)
-    #print msg
+    # print msg
     if not error:
         rx_packets = msg['rx_packets'] if 'rx_packets' in msg else -1
         rx_bytes = msg['rx_bytes'] if 'rx_bytes' in msg else -1
@@ -126,15 +126,12 @@ def send_msg_get_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=
         tx_errors = -1
         time_stamp = None
 
-    return msg, { 'rx_packets' : rx_packets,
-                  'rx_bytes'   : rx_bytes,
-                  'rx_dropped' : rx_dropped,
-                  'rx_errors'  : rx_errors,
-                  'tx_packets' : tx_packets,
-                  'tx_bytes'   : tx_bytes,
-                  'tx_dropped' : tx_dropped,
-                  'tx_errors'  : tx_errors,
-                  'time_stamp' : time_stamp, }
-
-
-
+    return msg, {'rx_packets': rx_packets,
+                 'rx_bytes': rx_bytes,
+                 'rx_dropped': rx_dropped,
+                 'rx_errors': rx_errors,
+                 'tx_packets': tx_packets,
+                 'tx_bytes': tx_bytes,
+                 'tx_dropped': tx_dropped,
+                 'tx_errors': tx_errors,
+                 'time_stamp': time_stamp, }

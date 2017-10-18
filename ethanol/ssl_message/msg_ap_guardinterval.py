@@ -22,7 +22,6 @@ no process is implemented: the controller is not supposed to respond to these me
 @requires: construct 2.5.2
 """
 
-
 from construct import SLInt64
 from construct import Embed
 from construct import Struct
@@ -35,7 +34,7 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_guardinterval = Struct('msg_ap_guardinterval',
-                              Embed(msg_default),   # default fields
+                              Embed(msg_default),  # default fields
                               Embed(field_intf_name),
                               SLInt64('guard_interval'),
                               # Probe()
@@ -55,16 +54,16 @@ def get_ap_guardinterval(server, id=0, intf_name=None):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        guard_interval = -1,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        guard_interval=-1,
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse)
     if not error:
@@ -73,6 +72,7 @@ def get_ap_guardinterval(server, id=0, intf_name=None):
         value = None
 
     return msg, value
+
 
 def set_ap_guardinterval(server, id=0, intf_name=None, guard_interval=100):
     """ set the guard interval of the interface intf_name
@@ -86,16 +86,15 @@ def set_ap_guardinterval(server, id=0, intf_name=None, guard_interval=100):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        guard_interval = guard_interval,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        guard_interval=guard_interval,
     )
     send_and_receive_msg(server, msg_struct, msg_ap_guardinterval.build, msg_ap_guardinterval.parse, only_send=True)
-

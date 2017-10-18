@@ -35,7 +35,7 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 msg_ap_dtiminterval = Struct('msg_ap_dtiminterval',
-                             Embed(msg_default),   # default fields
+                             Embed(msg_default),  # default fields
                              Embed(field_intf_name),
                              SLInt32('dtim_interval'),
                              # Probe()
@@ -55,16 +55,16 @@ def get_ap_dtiminterval(server, id=0, intf_name=None):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_AP_DTIMINTERVAL,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_AP_DTIMINTERVAL,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        dtim_interval = -1,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        dtim_interval=-1,
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse)
     if not error:
@@ -73,6 +73,7 @@ def get_ap_dtiminterval(server, id=0, intf_name=None):
         value = None
 
     return msg, value
+
 
 def set_ap_dtiminterval(server, id=0, intf_name=None, dtim_interval=100):
     """ set the DTIM interval of the interface intf_name
@@ -88,16 +89,15 @@ def set_ap_dtiminterval(server, id=0, intf_name=None, dtim_interval=100):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_AP_DTIMINTERVAL,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_AP_DTIMINTERVAL,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        dtim_interval = dtim_interval,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        dtim_interval=dtim_interval,
     )
     send_and_receive_msg(server, msg_struct, msg_ap_dtiminterval.build, msg_ap_dtiminterval.parse, only_send=True)
-

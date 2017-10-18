@@ -25,7 +25,7 @@ from pox.ethanol.ssl_message.msg_common import VERSION
 from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
 
 msg_error = Struct('msg_error',
-                   Embed(msg_default),    # default fields
+                   Embed(msg_default),  # default fields
                    SLInt32('error_type')  # int (32 bits) - little endian --> define the type of error, default UNKNOWN
                    )
 

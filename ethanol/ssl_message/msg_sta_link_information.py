@@ -25,8 +25,8 @@ from construct import Struct
 from construct import Container
 from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields
-from pox.ethanol.ssl_message.msg_core   import field_station, field_ssid, field_intf_name, field_mac_addr
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import field_station, field_ssid, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
@@ -40,7 +40,7 @@ msg_sta_link_info = Struct('msg_sta_link_info',
                            )
 
 
-def get_sta_link_info(server, id=0, sta_ip=None, sta_port=0, intf_name = None):
+def get_sta_link_info(server, id=0, sta_ip=None, sta_port=0, intf_name=None):
     """
       returns three values: mac_addr, ssid, frequency
       None equals an error has occured (or no interface found)
@@ -59,25 +59,25 @@ def get_sta_link_info(server, id=0, sta_ip=None, sta_port=0, intf_name = None):
       @return: msg - received message
     """
     if intf_name == None:
-        return None,None,None,None,None
+        return None, None, None, None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_LINK_INFO,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_LINK_INFO,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name == None else len(intf_name),
-        intf_name = intf_name,
-        ssid = None,
-        ssid_size = 0,
-        mac_addr = None,
-        mac_addr_size = 0,
-        sta_ip_size = 0 if sta_ip == None else len(sta_ip),
-        sta_ip = sta_ip,
-        sta_port = sta_port,
-        frequency = 0,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        ssid=None,
+        ssid_size=0,
+        mac_addr=None,
+        mac_addr_size=0,
+        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        frequency=0,
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_sta_link_info.build, msg_sta_link_info.parse)
     if not error:

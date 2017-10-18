@@ -24,11 +24,10 @@ from construct import Embed
 from construct import Array, Struct, Container
 from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields
-from pox.ethanol.ssl_message.msg_core   import field_intf_name
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
-
 
 channel_info = Struct('channel_info',
                       ULInt32('frequency'),
@@ -43,16 +42,16 @@ channel_info = Struct('channel_info',
                       )
 
 msg_channelinfo = Struct('msg_channelinfo',
-                    Embed(msg_default),   # default fields
-                    Embed(field_intf_name),
-                    SLInt32('channel'),
-                    SLInt32('num_freqs'),
-                    #Probe(),
-                    Array(lambda ctx: ctx.num_freqs, channel_info),
-                )
+                         Embed(msg_default),  # default fields
+                         Embed(field_intf_name),
+                         SLInt32('channel'),
+                         SLInt32('num_freqs'),
+                         # Probe(),
+                         Array(lambda ctx: ctx.num_freqs, channel_info),
+                         )
 
 
-def get_channelinfo(server, id=0, intf_name=None, channel = 0, only_channel_in_use = False):
+def get_channelinfo(server, id=0, intf_name=None, channel=0, only_channel_in_use=False):
     """ get the channels the interface inff_name supports, this function applies to access points
 
       @param server: tuple (ip, port_num)
@@ -69,39 +68,38 @@ def get_channelinfo(server, id=0, intf_name=None, channel = 0, only_channel_in_u
     """
     if intf_name is None:
         raise ValueError("intf_name must have a valid value!")
-    #1) create message
-    msg_struct = Container(m_type = MSG_TYPE.MSG_GET_CHANNELINFO,
-                           m_id = id,
+    # 1) create message
+    msg_struct = Container(m_type=MSG_TYPE.MSG_GET_CHANNELINFO,
+                           m_id=id,
                            p_version_length=len(VERSION),
-                           p_version = VERSION,
-                           m_size = 0,
-                           intf_name_size = 0 if intf_name is None else len(intf_name),
-                           intf_name = intf_name,
-                           channel = channel,
-                           num_freqs = 0,    # don´t know how many bands are in the AP
-                           channel_info = [],    # field will be filled by the AP
+                           p_version=VERSION,
+                           m_size=0,
+                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name=intf_name,
+                           channel=channel,
+                           num_freqs=0,  # don´t know how many bands are in the AP
+                           channel_info=[],  # field will be filled by the AP
                            )
     error, msg = send_and_receive_msg(server, msg_struct, msg_channelinfo.build, msg_channelinfo.parse)
-    #print msg
+    # print msg
     if error:
-      return msg, []
+        return msg, []
 
     value = msg['channel_info'] if 'channel_info' in msg else []
     if (value != []) and only_channel_in_use:
-      for i in range(len(value)):
-        if value[i]['in_use'] == 1:
-          d = dict(value[i])
-          if '__recursion_lock__' in d:
-            del d['__recursion_lock__']
-          value = [d]
-          break
+        for i in range(len(value)):
+            if value[i]['in_use'] == 1:
+                d = dict(value[i])
+                if '__recursion_lock__' in d:
+                    del d['__recursion_lock__']
+                value = [d]
+                break
 
     for c in value:
-      v = tri_boolean('in_use', c)
-      c['in_use'] = v
+        v = tri_boolean('in_use', c)
+        c['in_use'] = v
 
     """
       returns the value, note: {} equals an error has occured or no band found
     """
     return msg, value
-

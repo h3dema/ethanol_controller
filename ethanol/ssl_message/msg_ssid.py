@@ -38,7 +38,7 @@ ssid_info = Struct('ssid_info',
                    )
 
 msg_ssid = Struct('msg_ssid',
-                  Embed(msg_default),   # default fields
+                  Embed(msg_default),  # default fields
                   Embed(field_station),
                   ULInt32('num_ssids'),
                   Array(lambda ctx: ctx.num_ssids, ssid_info),
@@ -71,7 +71,7 @@ def get_ssid(server, id=0, intf_name=[], sta_ip=None, sta_port=0):
         ssid_info.append(entry)
     num_ssids = len(ssid_info)
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_GET_AP_SSID,
                            m_id=id,
                            p_version_length=len(VERSION),

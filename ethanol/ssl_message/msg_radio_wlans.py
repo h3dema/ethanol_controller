@@ -45,7 +45,7 @@ list_of_radio_wlans = Struct('list_of_radio_wlans',
 
 """ message structure """
 msg_radio_wlans = Struct('msg_radio_wlans',
-                         Embed(msg_default),   # default fields
+                         Embed(msg_default),  # default fields
                          Embed(field_station),
                          ULInt32('num_wlans'),
                          Array(lambda ctx: ctx.num_wlans, list_of_radio_wlans),
@@ -74,18 +74,18 @@ def get_radio_wlans(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
       None equals an error has occured (or no interface found)
     """
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_RADIO_WLANS,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_RADIO_WLANS,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        sta_ip_size = 0 if sta_ip == None else len(sta_ip) ,
-        sta_ip = sta_ip,
-        sta_port = sta_port,
-        num_wlans = 0,
-        list_of_radio_wlans = [],
+        p_version=VERSION,
+        m_size=0,
+        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        num_wlans=0,
+        list_of_radio_wlans=[],
     )
 
     error, msg = send_and_receive_msg(server, msg_struct, msg_radio_wlans.build, msg_radio_wlans.parse)

@@ -35,11 +35,12 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
 
 msg_ctsprotection_enabled = Struct('ctsprotection_enabled',
-                                   Embed(msg_default),   # default fields
+                                   Embed(msg_default),  # default fields
                                    Embed(field_intf_name),
                                    SLInt8('enabled'),
                                    # Probe()
                                    )
+
 
 def get_ctsprotection_enabled(server, id=0, intf_name=None):
     """ Verify if RTS/CTS mechanism is activated
@@ -55,23 +56,25 @@ def get_ctsprotection_enabled(server, id=0, intf_name=None):
     if intf_name is None:
         return None, None
 
-    #1) create message
-    msg_struct = Container(m_type = MSG_TYPE.MSG_GET_AP_BROADCASTSSID,
-                           m_id = id,
+    # 1) create message
+    msg_struct = Container(m_type=MSG_TYPE.MSG_GET_AP_BROADCASTSSID,
+                           m_id=id,
                            p_version_length=len(VERSION),
-                           p_version = VERSION,
-                           m_size = 0,
-                           intf_name_size = 0 if intf_name is None else len(intf_name),
-                           intf_name = intf_name,
-                           enabled = False,
+                           p_version=VERSION,
+                           m_size=0,
+                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name=intf_name,
+                           enabled=False,
                            )
-    error, msg = send_and_receive_msg(server, msg_struct, msg_ctsprotection_enabled.build, msg_ctsprotection_enabled.parse)
+    error, msg = send_and_receive_msg(server, msg_struct, msg_ctsprotection_enabled.build,
+                                      msg_ctsprotection_enabled.parse)
     if not error:
         value = tri_boolean('enabled', msg)
     else:
         value = False
 
     return msg, value
+
 
 def set_ctsprotection_enabled(server, id=0, intf_name=None, enable=False):
     """ enable or disable RTS/CTS mechanism
@@ -89,15 +92,16 @@ def set_ctsprotection_enabled(server, id=0, intf_name=None, enable=False):
     if intf_name is None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_AP_BROADCASTSSID,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_AP_BROADCASTSSID,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        enabled = enable,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        enabled=enable,
     )
-    send_and_receive_msg(server, msg_struct, msg_ctsprotection_enabled.build, msg_ctsprotection_enabled.parse, only_send=True)
+    send_and_receive_msg(server, msg_struct, msg_ctsprotection_enabled.build, msg_ctsprotection_enabled.parse,
+                         only_send=True)

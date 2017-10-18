@@ -39,7 +39,7 @@ intfs = Struct('intfs',
                )
 
 msg_intf = Struct('msg_intf',
-                  Embed(msg_default),   # default fields
+                  Embed(msg_default),  # default fields
                   Embed(field_station),
                   ULInt32('num_intf'),
                   Array(lambda ctx: ctx.num_intf, intfs),

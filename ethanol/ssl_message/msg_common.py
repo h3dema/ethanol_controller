@@ -18,7 +18,6 @@ from socket import socket, AF_INET, SOCK_STREAM
 from pox.ethanol.ssl_message.enum import Enum
 from pox.ethanol.ssl_message.msg_core import msg_default
 
-
 # #####################################
 #
 # message version
@@ -199,7 +198,6 @@ SERVER_PORT = 22222
 BUFFER_SIZE = 65536
 """ size of the buffer used by the python socket"""
 
-
 MSG_ERROR_TYPE = Enum('ERROR_UNKNOWN',
                       'ERROR_VERSION_MISMATCH',
                       'ERROR_PROCESS_NOT_IMPLEMENTED_FOR_THIS_MESSAGE',
@@ -238,7 +236,7 @@ def connect_ssl_socket(server):
     ssl_sock = ssl.wrap_socket(sckt)  # , cert_reqs=ssl.CERT_REQUIRED)
     # print 'Socket -->: conectando '
     try:
-       conn = ssl_sock.connect(server)
+        conn = ssl_sock.connect(server)
     except:
         return -1
     # print 'Socket -->: conexao estabelecida '

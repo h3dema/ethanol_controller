@@ -30,9 +30,8 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, BUFFER_SIZE
 from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
 from pox.ethanol.ssl_message.msg_common import is_error_msg, tri_boolean
 
-
 msg_ping = Struct('msg_ping',
-                  Embed(msg_default),   # default fields
+                  Embed(msg_default),  # default fields
                   SLInt32('data_size'),
                   If(lambda ctx: ctx["data_size"] > 0, CString("data")),
                   # Probe(),
@@ -41,22 +40,24 @@ msg_ping = Struct('msg_ping',
 """
 
 msg_pong = Struct('msg_pong',
-                  Embed(msg_default),          # default fields
-                  LFloat32('rtt'),             # float com 32 bits, LFloat32 (C little endian 32 bits)
+                  Embed(msg_default),  # default fields
+                  LFloat32('rtt'),  # float com 32 bits, LFloat32 (C little endian 32 bits)
                   SLInt8('verify_data'),  # class boolean
                   # Probe(),
                   )
 """ pong message data structure
 """
 
+BYTE_INICIAL = 48
 
-BYTE_INICIAL=48
+
 def generate_ping_data(p_size=64):
     data = '';
     for i in range(p_size):
-        data += chr((BYTE_INICIAL + i) % 128) # 7-bit ASCII
+        data += chr((BYTE_INICIAL + i) % 128)  # 7-bit ASCII
     data += chr(0)
     return data;
+
 
 def verify_data(data, p_size):
     """
@@ -75,10 +76,10 @@ def send_msg(server, msg):
     ssl_sock = connect_ssl_socket(server)
 
     t0 = datetime.now()
-    num_bytes=ssl_sock.write(msg)
+    num_bytes = ssl_sock.write(msg)
 
-    #3) retrieve server's response
-    received_msg=ssl_sock.read(BUFFER_SIZE)
+    # 3) retrieve server's response
+    received_msg = ssl_sock.read(BUFFER_SIZE)
     t1 = datetime.now()
     ssl_sock.close()
     if is_error_msg(received_msg):
@@ -98,14 +99,14 @@ def send_msg_ping(server, id=0, num_tries=1, p_size=64):
         @param p_size: payload size (extra size in bytes added to the message)
         @return: all messages sent
     """
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_PING,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_PING,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        data_size = p_size
+        p_version=VERSION,
+        m_size=0,
+        data_size=p_size
     )
     msg_struct.data = generate_ping_data(p_size)
 
@@ -121,20 +122,21 @@ def send_msg_ping(server, id=0, num_tries=1, p_size=64):
 
     return ret
 
+
 def process_msg_ping(received_msg, fromaddr):
     """ grabs the ping message, verifies the data field and returns a pong message
     """
     msg = msg_ping.parse(received_msg)
-    msg['data'] += chr(0) # add "\0" at the end of this field, to transform it into a C string
-    #print "process_msg_ping - parse", msg
+    msg['data'] += chr(0)  # add "\0" at the end of this field, to transform it into a C string
+    # print "process_msg_ping - parse", msg
 
     result = Container(
-        m_type = MSG_TYPE.MSG_PONG,
-        m_id = msg['m_id'],
+        m_type=MSG_TYPE.MSG_PONG,
+        m_id=msg['m_id'],
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        rtt = 0,
-        verify_data = verify_data(msg['data'], msg['data_size'])
+        p_version=VERSION,
+        m_size=0,
+        rtt=0,
+        verify_data=verify_data(msg['data'], msg['data_size'])
     )
     return msg_pong.build(result)

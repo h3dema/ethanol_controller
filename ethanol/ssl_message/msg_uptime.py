@@ -25,19 +25,20 @@ from construct import Struct
 from construct import Container
 from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
 from pox.ethanol.ethanol.ap import add_ap
 
 msg_uptime = Struct('msg_uptime',
-                    Embed(msg_default),   # default fields
+                    Embed(msg_default),  # default fields
                     LFloat64('uptime'),
                     LFloat64('idle'),
-                    #Probe()
+                    # Probe()
                     )
 """ message structure common to all supported_messages messages"""
+
 
 def get_uptime(server, id=0):
     """ get uptime
@@ -49,13 +50,13 @@ def get_uptime(server, id=0):
           value (bytes or packets received or sent or lost)
     """
     msg_struct = Container(
-        m_type = type,
-        m_id = id,
+        m_type=type,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        uptime = 0,
-        idle = 0,
+        p_version=VERSION,
+        m_size=0,
+        uptime=0,
+        idle=0,
     )
 
     error, msg = send_and_receive_msg(server, msg_struct, msg_uptime.build, msg_uptime.parse)

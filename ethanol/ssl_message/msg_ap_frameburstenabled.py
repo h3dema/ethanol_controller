@@ -35,7 +35,7 @@ from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
 
 msg_ap_frameburstenabled = Struct('msg_ap_frameburstenabled',
-                                  Embed(msg_default),   # default fields
+                                  Embed(msg_default),  # default fields
                                   Embed(field_intf_name),
                                   SLInt8('enabled'),
                                   # Probe()
@@ -54,7 +54,7 @@ def get_ap_frameburstenabled(server, id=0, intf_name=None):
         @return msg: received message
         @return value:
     """
-    if intf_name==None:
+    if intf_name == None:
         return None, None
 
     """
@@ -63,24 +63,26 @@ def get_ap_frameburstenabled(server, id=0, intf_name=None):
     """
     value = None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_AP_FRAMEBURSTENABLED,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_AP_FRAMEBURSTENABLED,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        enabled = False,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        enabled=False,
     )
-    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_frameburstenabled.build, msg_ap_frameburstenabled.parse)
+    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_frameburstenabled.build,
+                                      msg_ap_frameburstenabled.parse)
     if not error:
         value = tri_boolean('enabled', msg)
     else:
         value = None
 
     return msg, value
+
 
 def set_ap_frameburstenabled(server, id=0, intf_name=None, enabled=False):
     """
@@ -92,19 +94,19 @@ def set_ap_frameburstenabled(server, id=0, intf_name=None, enabled=False):
         @param enabled: enables or disables frame burst
         @type enabled: bool
     """
-    if intf_name==None:
+    if intf_name == None:
         return None, None
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_AP_FRAMEBURSTENABLED,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_AP_FRAMEBURSTENABLED,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name is None else len(intf_name),
-        intf_name = intf_name,
-        enabled = enabled,
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name=intf_name,
+        enabled=enabled,
     )
-    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_frameburstenabled.build, msg_ap_frameburstenabled.parse, only_send=True)
-
+    error, msg = send_and_receive_msg(server, msg_struct, msg_ap_frameburstenabled.build,
+                                      msg_ap_frameburstenabled.parse, only_send=True)

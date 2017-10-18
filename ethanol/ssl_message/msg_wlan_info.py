@@ -20,12 +20,10 @@ from construct import ULInt32, SLInt32, ULInt64, SLInt64, CString
 from construct import Embed, Struct, Container, Array
 from construct import If
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields
-from pox.ethanol.ssl_message.msg_core   import field_station, field_mac_addr, field_ssid, field_intf_name
+from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import field_station, field_mac_addr, field_ssid, field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
-
-
 
 # ###############################################################
 #
@@ -50,15 +48,16 @@ wlan_entry = Struct('wlan_entry',
 """ information about a wifi interface"""
 
 msg_wlan_info = Struct('msg_wlan_info',
-                       Embed(msg_default),   # default fields
+                       Embed(msg_default),  # default fields
                        Embed(field_station),
 
                        ULInt32('num_entries'),
                        Array(lambda ctx: ctx.num_entries, wlan_entry),
-                       #Probe()
+                       # Probe()
                        )
 
-def req_wlan_info(server, id=0, intf_name_list=None, sta_ip = None, sta_port = 0):
+
+def req_wlan_info(server, id=0, intf_name_list=None, sta_ip=None, sta_port=0):
     """
       @param server: tuple (ip, port_num)
       @param id: message id
@@ -81,38 +80,38 @@ def req_wlan_info(server, id=0, intf_name_list=None, sta_ip = None, sta_port = 0
     wlan_entry = []
     for intf in intf_name_list:
         entry = Container(
-            ifindex = 0,
-            intf_name_size = len(intf),
-            intf_name = intf,
-            wlan_indx = 0,
-            phy_indx = 0,
-            dev = 0,
-            mac_addr_size = 0,
-            mac_addr = None,
-            ssid_size = 0,
-            ssid = None,
-            channel_type = 0,
-            chan_width = 0,
-            freq = 0,
-            freq1 = 0,
-            freq2 = 0,
-            iftype = 0
+            ifindex=0,
+            intf_name_size=len(intf),
+            intf_name=intf,
+            wlan_indx=0,
+            phy_indx=0,
+            dev=0,
+            mac_addr_size=0,
+            mac_addr=None,
+            ssid_size=0,
+            ssid=None,
+            channel_type=0,
+            chan_width=0,
+            freq=0,
+            freq1=0,
+            freq2=0,
+            iftype=0
         )
         wlan_entry.append(entry)
     num_entries = len(wlan_entry)
 
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_WLAN_INFO,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_WLAN_INFO,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        sta_ip_size = 0 if sta_ip == None else len(sta_ip),
-        sta_ip = sta_ip,
-        sta_port = sta_port,
-        num_entries = num_entries,
-        wlan_entry = wlan_entry,
+        p_version=VERSION,
+        m_size=0,
+        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        num_entries=num_entries,
+        wlan_entry=wlan_entry,
     )
 
     error, msg = send_and_receive_msg(server, msg_struct, msg_wlan_info.build, msg_wlan_info.parse)
@@ -122,4 +121,3 @@ def req_wlan_info(server, id=0, intf_name_list=None, sta_ip = None, sta_port = 0
         value = []
 
     return msg, value
-

@@ -38,7 +38,7 @@ field_current_ap = Struct('current_ap',
                           )
 
 msg_changed_ap = Struct('msg_changed_ap',
-                        Embed(msg_default),   # default fields
+                        Embed(msg_default),  # default fields
                         Embed(field_intf_name),
                         Embed(field_current_ap),
                         SLInt32('status'),
@@ -47,39 +47,41 @@ msg_changed_ap = Struct('msg_changed_ap',
 
 
 def changed_ap(server, id=0, status=0, current_ap=None, intf_name=None):
-  """ verify is the interface is broadcasting the SSID
-    @param server: tuple (ip, port_num)
-    @param id: message id
-    @param intf_name: names of the wireless interface
-    @type intf_name: list of str
-    @param status: inform the status of the operation (result from change ap operation)
-    @type status: int
-    @param current_ap: MAC address of the ap
-    @type current_ap: str
-  """
-  if (intf_name==None) or (current_ap ==None):
-    return
+    """ verify is the interface is broadcasting the SSID
+      @param server: tuple (ip, port_num)
+      @param id: message id
+      @param intf_name: names of the wireless interface
+      @type intf_name: list of str
+      @param status: inform the status of the operation (result from change ap operation)
+      @type status: int
+      @param current_ap: MAC address of the ap
+      @type current_ap: str
+    """
+    if (intf_name == None) or (current_ap == None):
+        return
 
-  #1) create message
-  msg_struct = Container(
-                  m_type = MSG_TYPE.MSG_CHANGED_AP,
-                  m_id = id,
-                  p_version_length=len(VERSION),
-                  p_version = VERSION,
-                  m_size = 0,
-                  intf_name_size = 0 if intf_name == None else len(intf_name),
-                  intf_name = intf_name,
-                  current_ap_size = 0 if current_ap == None else len(current_ap),
-                  current_ap = current_ap,
-                  status = status,
-               )
-  error, msg = send_and_receive_msg(server, msg_struct, msg_changed_ap.build, msg_changed_ap.parse, only_send = True)
+    # 1) create message
+    msg_struct = Container(
+        m_type=MSG_TYPE.MSG_CHANGED_AP,
+        m_id=id,
+        p_version_length=len(VERSION),
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        current_ap_size=0 if current_ap == None else len(current_ap),
+        current_ap=current_ap,
+        status=status,
+    )
+    error, msg = send_and_receive_msg(server, msg_struct, msg_changed_ap.build, msg_changed_ap.parse, only_send=True)
+
 
 def process_hello(received_msg, fromaddr):
-  """
-    for now, only logs the information
-    @param received_msg: stream of bytes to be decoded
-    @param fromaddr: IP address from the device that sent this message
-  """
-  msg = msg_changed_ap.parse(received_msg)
-  log.debug( "Changed AP: status: %d - current ap: %s - interface: %s " % (msg["status"], msg["current_ap"], msg["intf_name"]) )
+    """
+      for now, only logs the information
+      @param received_msg: stream of bytes to be decoded
+      @param fromaddr: IP address from the device that sent this message
+    """
+    msg = msg_changed_ap.parse(received_msg)
+    log.debug("Changed AP: status: %d - current ap: %s - interface: %s " % (
+    msg["status"], msg["current_ap"], msg["intf_name"]))

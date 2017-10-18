@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-'''
+"""
   implementação de ssl-client.c em python
-'''
+
+  FOR TESTING ONLY
+"""
 import ssl
 from socket import socket, AF_INET, SOCK_STREAM
 from random import randint

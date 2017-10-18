@@ -21,15 +21,14 @@ from construct import SLInt32, LFloat32, CString
 from construct import Embed, Struct, Container
 from construct import If
 
-
-from pox.ethanol.ssl_message.msg_core   import msg_default
-from pox.ethanol.ssl_message.msg_core   import field_intf_name
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 from pox.ethanol.ssl_message.msg_common import DEFAULT_WIFI_INTFNAME
 
 msg_preamble = Struct('msg_preamble',
-                      Embed(msg_default),   # default fields
+                      Embed(msg_default),  # default fields
                       Embed(field_intf_name),
                       SLInt32('preamble'),
                       )
@@ -44,16 +43,16 @@ def get_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME):
 
       @return: msg - received message
     """
-    #1) create message
+    # 1) create message
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_GET_PREAMBLE,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_GET_PREAMBLE,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name == None else len(intf_name),
-        intf_name = intf_name,
-        preamble = 0
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        preamble=0
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_preamble.build, msg_preamble.parse)
     if not error:
@@ -76,18 +75,17 @@ def set_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME, preamble=0):
 
       @return: msg - received message
     """
-    if preamble != 1: preamble = 0 # default equals LONG
+    if preamble != 1: preamble = 0  # default equals LONG
 
     # create message container
     msg_struct = Container(
-        m_type = MSG_TYPE.MSG_SET_PREAMBLE,
-        m_id = id,
+        m_type=MSG_TYPE.MSG_SET_PREAMBLE,
+        m_id=id,
         p_version_length=len(VERSION),
-        p_version = VERSION,
-        m_size = 0,
-        intf_name_size = 0 if intf_name == None else len(intf_name),
-        intf_name = intf_name,
-        preamble = preamble
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name=intf_name,
+        preamble=preamble
     )
-    send_and_receive_msg(server, msg_struct, msg_preamble.build, msg_preamble.parse, only_send = True)
-
+    send_and_receive_msg(server, msg_struct, msg_preamble.build, msg_preamble.parse, only_send=True)

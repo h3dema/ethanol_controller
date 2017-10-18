@@ -50,7 +50,7 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
                         MSG_TYPE.MSG_GET_AP_RTSTHRESHOLD: process_msg_not_implemented,
                         MSG_TYPE.MSG_GET_AP_SSID: process_msg_not_implemented,
                         MSG_TYPE.MSG_GET_BEACON_INTERVAL: process_msg_not_implemented,
-                        MSG_TYPE.MSG_GET_BEACON_INTERVAL: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_BEACON_INTERVAL: process_msg_not_implemented,
                         MSG_TYPE.MSG_GET_BYTESRECEIVED: process_msg_not_implemented,
                         MSG_TYPE.MSG_GET_BYTESSENT: process_msg_not_implemented,
                         MSG_TYPE.MSG_GET_CHANNELINFO: process_msg_not_implemented,
@@ -67,7 +67,7 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
                         MSG_TYPE.MSG_GET_VALIDCHANNELS: process_msg_not_implemented,
                         MSG_TYPE.MSG_HELLO_TYPE: process_hello,
                         MSG_TYPE.MSG_PING: process_msg_ping,
-                        MSG_TYPE.MSG_PING: process_msg_not_implemented,
+                        MSG_TYPE.MSG_PONG: process_msg_not_implemented,
                         MSG_TYPE.MSG_REASSOCIATION: process_association,
                         MSG_TYPE.MSG_SET_AP_BROADCASTSSID: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_AP_CTSPROTECTION_ENABLED: process_msg_not_implemented,
@@ -75,7 +75,6 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
                         MSG_TYPE.MSG_SET_AP_FRAMEBURSTENABLED: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_AP_GUARDINTERVAL: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_AP_RTSTHRESHOLD: process_msg_not_implemented,
-                        MSG_TYPE.MSG_SET_BEACON_INTERVAL: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_CURRENTCHANNEL: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_PREAMBLE: process_msg_not_implemented,
                         MSG_TYPE.MSG_USER_CONNECTING: process_association,
@@ -101,8 +100,8 @@ def deal_with_client(connstream, fromaddr):
     # decode message
     msg = decode_default_fields(received_msg)
     m_type = msg['m_type']
-    #To print the messages received on controler
-    #print "msg recebida - tipo:", m_type
+    # To print the messages received on controler
+    # print "msg recebida - tipo:", m_type
     if m_type in map_msg_to_procedure:
         # switch...case to deal with each kind of message
         func = map_msg_to_procedure[msg.m_type]
@@ -117,10 +116,12 @@ def deal_with_client(connstream, fromaddr):
     # finished with client
     connstream.close()
 
+
 DEFAULT_CERT_PATH = os.path.dirname(os.path.abspath(__file__))
 """path to the ssl certificate used in the secure socket connections"""
 SSL_CERTIFICATE = DEFAULT_CERT_PATH + '/mycert.pem'
 """path and default name of the ssl certificate"""
+
 
 def run(server):
     """ to use this module only call this method, providing a tuple with (server ip address, server port)
@@ -135,15 +136,15 @@ def run(server):
         # socket
         bindsocket = socket.socket()
         bindsocket.bind(server)
-        bindsocket.listen(5) # specifies the maximum number of queued connections
+        bindsocket.listen(5)  # specifies the maximum number of queued connections
         while True:
             try:
                 newsocket, fromaddr = bindsocket.accept()
                 connstream = ssl.wrap_socket(newsocket,
                                              server_side=True,
-                                             certfile=SSL_CERTIFICATE, # load certs
+                                             certfile=SSL_CERTIFICATE,  # load certs
                                              keyfile=SSL_CERTIFICATE,
-                                             ssl_version=ssl.PROTOCOL_SSLv3) # same as ssl_server.c
+                                             ssl_version=ssl.PROTOCOL_SSLv3)  # same as ssl_server.c
                 """ deal without a thread """
                 # deal_with_client(connstream, fromaddr)
                 """ deal with the request in a thread, so multiple connections can be served """
@@ -155,6 +156,7 @@ def run(server):
 
     return 0
 
+
 if __name__ == "__main__":
-    server=('localhost', SERVER_PORT) # SERVER_PORT
+    server = ('localhost', SERVER_PORT)  # SERVER_PORT
     run(server)

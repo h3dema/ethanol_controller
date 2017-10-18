@@ -32,9 +32,8 @@ from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
-
 msg_tos_cleanall = Struct('msg_tos_cleanall',
-                          Embed(msg_default),   # default fields
+                          Embed(msg_default),  # default fields
                           # Probe(),
                           )
 """ message to clear mange rules """
@@ -58,7 +57,7 @@ def msg_tos_cleanall(server, id=0):
 
 
 msg_tos = Struct('msg_tos',
-                 Embed(msg_default),   # default fields
+                 Embed(msg_default),  # default fields
                  SLInt32('rule_id'),
                  Embed(field_intf_name),
                  SLInt32('proto_size'),
@@ -123,7 +122,8 @@ def msg_tos_add(server, msg_id=0, intf_name=None, proto=None, sip=None, sport=No
               wmm_class=wmm_class)
 
 
-def msg_tos_replace(server, msg_id=0, rule_id=-1, intf_name=None, proto=None, sip=None, sport=None, dip=None, dport=None, wmm_class=0):
+def msg_tos_replace(server, msg_id=0, rule_id=-1, intf_name=None, proto=None, sip=None, sport=None, dip=None,
+                    dport=None, wmm_class=0):
     """ msg_tos_cleanall uptime
 
       @param server: tuple (ip, port_num)

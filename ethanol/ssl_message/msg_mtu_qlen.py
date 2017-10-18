@@ -26,9 +26,8 @@ from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
-
 msg_mtu_qlen = Struct('msg_mtu_qlen',
-                      Embed(msg_default),          # default fields
+                      Embed(msg_default),  # default fields
                       Embed(field_station),
                       Embed(field_intf_name),
                       SLInt32('value'),
