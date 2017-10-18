@@ -157,9 +157,7 @@ class Device(object):
         """ number of bytes received on this interface (cumulative value) """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = send_msg_get_bytesreceived(server, id=self.msg_id,
                                                 intf_name=self.__intf_name)
         return value
@@ -169,9 +167,7 @@ class Device(object):
         """ number of bytes sent on this interface (cumulative value) """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = send_msg_get_bytessent(server, id=self.msg_id,
                                             intf_name=self.__intf_name)
         return value
@@ -181,9 +177,7 @@ class Device(object):
         """ number of packets received on this interface (cumulative value) """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = send_msg_get_packetsreceived(server, id=self.msg_id,
                                                   intf_name=self.__intf_name)
         return value
@@ -193,9 +187,7 @@ class Device(object):
         """ number of packets sent on this interface (cumulative value) """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = send_msg_get_packetssent(server, id=self.msg_id,
                                               intf_name=self.__intf_name)
         log.debug('packetSent device %f', value)
@@ -206,9 +198,7 @@ class Device(object):
         """ number of packets lost on this interface (cumulative value) """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = send_msg_get_packetslost(server, id=self.msg_id,
                                               intf_name=self.__intf_name)
         log.debug('packetsLost device %f', value)
@@ -258,7 +248,7 @@ class Device(object):
         """
         if self.__intf_name is None:
             return -1
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, stats = send_msg_get_statistics(server, id=self.msg_id,
                                              intf_name=self.__intf_name)
         # log.debug('Statistics device %d, %d, %d, %d, %d, %s', rx_packets,
@@ -276,8 +266,7 @@ class Device(object):
         """ retrieve current SNR """
         if self.__intf_name is None:
             return -1
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = get_snr(server, id=self.msg_id,
                              intf_name=self.__intf_name)
         log.debug('SNR %f', value)
@@ -288,9 +277,7 @@ class Device(object):
         """ retrieve the TX power """
         if self.__intf_name is None:
             return -1
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = get_txpower(server, id=self.msg_id,
                                  intf_name=self.__intf_name)
         log.debug('get TXPower device %f', value)
@@ -301,7 +288,7 @@ class Device(object):
         """set current tx power"""
         if self.__intf_name is None:
             return -1
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         set_txpower(server, id=self.msg_id, intf_name=self.__intf_name,
                     txpower=new_value)
         log.debug('set TXPower device to %f', new_value)
@@ -336,7 +323,7 @@ class Device(object):
         """ physical device's CPU usage """
         if self.__intf_name is None:
             return -1
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = get_cpu_usage(server, id=self.msg_id)
         log.debug('CPU device %f', value)
         return value
@@ -351,7 +338,7 @@ class Device(object):
         """ physical device's memory usage """
         if self.__intf_name is None:
             return -1
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, value = get_memory_usage(server, id=self.msg_id)
         log.debug('Memory device %f', value)
         return value
@@ -369,9 +356,7 @@ class Device(object):
         """
         if self.__intf_name is None:
             return -1, None
-
-        # deste jeito esta mandando a mensagem diretamente para a estacao
-        server = self.get_connection  # conexao direta com a estacao
+        server = self.get_connection
         msg, num_aps, aps = get_ap_in_range(server, id=self.msg_id,
                                             intf_name=self.__intf_name)
         log.debug('get ap_in_range device %d, %f', num_aps, aps)

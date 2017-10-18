@@ -23,10 +23,10 @@ from construct import ULInt32
 from construct import Embed, Array
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core   import msg_default, decode_default_fields
-from pox.ethanol.ssl_message.msg_core   import field_station, field_intf_name, field_mac_addr
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
 from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
 
@@ -49,7 +49,7 @@ msg_radio_wlans = Struct('msg_radio_wlans',
                          Embed(field_station),
                          ULInt32('num_wlans'),
                          Array(lambda ctx: ctx.num_wlans, list_of_radio_wlans),
-                         #Probe()
+                         # Probe()
                          )
 
 

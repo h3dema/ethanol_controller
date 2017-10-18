@@ -28,14 +28,8 @@ import uuid
 
 from pox.ethanol.ssl_message.msg_common import SERVER_PORT
 from pox.ethanol.ssl_message.msg_log import log
-
-# from pox.ethanol.ssl_message.msg_beacon_interval import get_beacon_interval
-# from pox.ethanol.ssl_message.msg_beacon_interval import set_beacon_interval
 from pox.ethanol.ssl_message.msg_ap_ssid import get_ap_ssids
-# from pox.ethanol.ssl_message.msg_wlan_info import req_wlan_info
 from pox.ethanol.ssl_message.msg_radio_wlans import get_radio_wlans
-# from pox.ethanol.ssl_message.msg_sta_link_information import \
-#   get_sta_link_info
 from pox.ethanol.ssl_message.msg_mean_sta_stats import \
     send_msg_mean_sta_statistics
 from pox.ethanol.ssl_message.msg_mean_sta_stats import \
@@ -44,7 +38,6 @@ from pox.ethanol.ssl_message.msg_mean_sta_stats import \
 from pox.ethanol.ssl_message.msg_mean_sta_stats import \
     send_msg_mean_sta_statistics_alpha, send_msg_mean_sta_statistics_time
 
-# from pox.ethanol.ethanol.network import add_network
 
 __list_of_aps = {}
 """
@@ -239,11 +232,9 @@ class AP(object):
                     # if there is no such ssid in list_of_networks
                     # (network.py) add it
                     vap = \
-                        self.createVirtualAP_and_insert_listVAP(ssid,
-                                                                self.__radios[
-                                                                    intf_name],
-                                                                intf_x_mac[
-                                                                    intf_name])
+                        self.createvirtualap_and_insert_listvap(ssid,
+                                                                self.__radios[intf_name],
+                                                                intf_x_mac[intf_name])
             log.info("Num# of VAPs: %d" % len(self.__listVAP))
 
         log.info('New AP created - id: %s', self.id)
@@ -303,7 +294,7 @@ class AP(object):
         """
         return self.__listVAP
 
-    def createVirtualAP_and_insert_listVAP(self, ssid, radio, mac_address):
+    def createvirtualap_and_insert_listvap(self, ssid, radio, mac_address):
         """ create the VAP based on ssid, radio, and mac_address
            inserts the vap in self.__listVAP list
 
@@ -317,13 +308,12 @@ class AP(object):
            @return: the vap created
         """
         from pox.ethanol.ethanol.vap import VAP
-
         server = (self.__ip, self.__port)
         vap = VAP(server, ssid, radio, mac_address)
         self.__listVAP.append(vap)
         return vap
 
-    def destroyVirtualAP(self, vap):
+    def destroyvirtualap(self, vap):
         """ remove a VAP: deactivate it (remove SSID)
           @param vap: a vap object (SSID connected to this AP)
           @type vap: vap.VAP object
@@ -333,27 +323,31 @@ class AP(object):
             """ destroys the vap """
             vap.__del__()
 
-    def getSupportedInterfaceModes(self, interface_name):
+    def getsupportedinterfacemodes(self, intf_name):
         """ indicates the modes supported
             @return: a list with the supported modes: AP, Station, Mesh, IBSS
         """
         server = self.__get_connection()
-        return get_ap_supported_intf_modes(server, interface_name,
-                                           id=self.msg_id)
+        from pox.ethanol.ssl_message.msg_ap_modes import get_ap_supported_intf_modes
+        msg, value = get_ap_supported_intf_modes(server, m_id=self.msg_id, intf_name=intf_name)
+        return value
 
-    def getInterferenceMap(self):
+    def getinterferencemap(self, intf_name):
         """ NOT IMPLEMENTED YET
             returns the interference map as defined in 802.11/2012
         """
         server = self.__get_connection()
-        return get_ap_interferenceMap(server, id=self.msg_id)
+        from pox.ethanol.ssl_message.msg_ap_interferencemap import get_ap_interferenceMap
+        msg, value = get_ap_interferenceMap(server, m_id=self.msg_id, intf_name=intf_name)
+        return value
 
-    def listWLAN_interfaces(self):
+    @property
+    def listwlan_interfaces(self):
         """ wireless interfaces in this AP
           @return: a list with the names of wireless interfaces in this AP
         """
         server = self.__get_connection()
-        msg, value = req_get_list_wlans(server, id=self.msg_id)
+        msg, value = get_radio_wlans(server, id=self.msg_id)
         return value
 
     def get_interface_stats(self):
@@ -364,29 +358,27 @@ class AP(object):
 
     def enable_interface_stats(self):
         server = self.__get_connection()
-        for intf in listWLAN_interfaces():
-            send_msg_mean_sta_statistics_interface_add(server,
-                                                       id=self.msg_id,
-                                                       intf_name=intf)
+        for interface in self.listwlan_interfaces:
+            send_msg_mean_sta_statistics_interface_add(server, id=self.msg_id,
+                                                       intf_name=interface['intf_name'])
 
     def disable_interface_stats(self):
         server = self.__get_connection()
-        for intf in listWLAN_interfaces():
-            send_msg_mean_sta_statistics_interface_remove(server,
-                                                          id=self.msg_id,
-                                                          intf_name=intf)
+        for interface in self.listwlan_interfaces:
+            send_msg_mean_sta_statistics_interface_remove(server, id=self.msg_id,
+                                                          intf_name=interface['intf_name'])
 
     @property
     def statistics_time(self):
-        """time between collection of traffic statistics. -1 means that
-        the collection is disabled"""
+        """time between collection of traffic statistics.
+        -1 means that data collection is disabled"""
         return self.__stats_msec
 
     @statistics_time.setter
     def statistics_time(self, new_time):
         """
-        @param new_time: set the time of collection in miliseconds. -1
-        means disabled
+        @param new_time: set the time of collection in miliseconds.
+                         send -1 to disable data collection
         """
         self.__stats_msec = new_time if new_time > 0 else -1
         server = self.__get_connection()
@@ -399,6 +391,7 @@ class AP(object):
 
     @statistics_alpha.setter
     def statistics_alpha(self, alpha):
+        """defines alpha value for EWMA"""
         self.__stats_alpha = alpha
         server = self.__get_connection()
         send_msg_mean_sta_statistics_alpha(server, id=self.msg_id, alpha=alpha)
