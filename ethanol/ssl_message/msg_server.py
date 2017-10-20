@@ -96,22 +96,23 @@ def deal_with_client(connstream, fromaddr):
     """
     # read data from client
     received_msg = connstream.read(65536)
-
-    # decode message
-    msg = decode_default_fields(received_msg)
-    m_type = msg['m_type']
-    # To print the messages received on controler
-    # print "msg recebida - tipo:", m_type
-    if m_type in map_msg_to_procedure:
-        # switch...case to deal with each kind of message
-        func = map_msg_to_procedure[msg.m_type]
-        reply = func(received_msg, fromaddr)
-    else:
-        reply = return_error_msg_struct(msg.id)
+    if len(received_msg) > 0:
+        # decode message
+        msg = decode_default_fields(received_msg)
+        m_type = msg['m_type']
+        # To print the messages received on controler
+        # print "msg recebida - tipo:", m_type
+        if m_type in map_msg_to_procedure:
+            # switch...case to deal with each kind of message
+            func = map_msg_to_procedure[msg.m_type]
+            reply = func(received_msg, fromaddr)
+        else:
+            reply = return_error_msg_struct(msg.id)
 
     # reply to client, if necessary
-    if None != reply:
+    if reply is not None:
         num_bytes = connstream.write(reply)
+        # log.debug(num_bytes)
 
     # finished with client
     connstream.close()

@@ -119,11 +119,7 @@ def process_hello(received_msg, fromaddr):
 
 
 def bogus_hello_on_change(**kwargs):
-    print "hello message received: ",
-    if 'fromaddr' in kwargs:
-        print kwargs['fromaddr']
-    else:
-        print
+    log.debug("hello message received: %s" % kwargs['fromaddr'] if 'fromaddr' in kwargs else "")
 
 
 # add a bogus procedure

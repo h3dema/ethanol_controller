@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" 
+"""
 All ssl_modules use python construct (https://pypi.python.org/pypi/construct).
 To install this module:
 
@@ -138,6 +138,8 @@ def decode_default_fields(received_msg):
     """ handles the default header of all ethanol's messages
     @param received_msg: byte stream to be decoded (parsed) using construct message struct
     """
+    # from pox.ethanol.ssl_message.msg_core import toHex
+    # print ">>>>> ", toHex(received_msg)
     msg = msg_default.parse(received_msg)
     # print "decode_default_fields", msg
     return msg
