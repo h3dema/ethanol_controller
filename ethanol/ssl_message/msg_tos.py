@@ -84,7 +84,6 @@ def __msg_tos(server, m_type, msg_id=0, rule_id=-1, intf_name=None,
             (proto is None) or (wmm_class not in range(8)) or \
             (m_type not in [MSG_TYPE.MSG_TOS_ADD, MSG_TYPE.MSG_TOS_REPLACE]):
         return
-    print "\n\n\n esta aqui"
     if isinstance(dport, int):
         dport = str(dport)
     if isinstance(dport, int):
@@ -109,9 +108,7 @@ def __msg_tos(server, m_type, msg_id=0, rule_id=-1, intf_name=None,
                            dport=dport,
                            wmm_class=wmm_class,
                            )
-    print "vai enviar ", m_type
     send_and_receive_msg(server, msg_struct, msg_tos.build, msg_tos.parse, only_send=True)
-    print "retornou"
 
 
 def tos_add(server, msg_id=0, intf_name=None, proto=None,
