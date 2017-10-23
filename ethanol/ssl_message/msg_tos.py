@@ -139,7 +139,8 @@ def tos_replace(server, msg_id=0, rule_id=-1, intf_name=None, proto=None,
 
       @return: nothing
     """
-    __msg_tos(server, m_type=MSG_TYPE.MSG_TOS_REPLACE, msg_id=msg_id, rule_id=-1,
+    __msg_tos(server, m_type=MSG_TYPE.MSG_TOS_REPLACE, msg_id=msg_id,
+              rule_id=rule_id,
               intf_name=intf_name, proto=proto,
               sip=sip, sport=sport, dip=dip, dport=dport,
               wmm_class=wmm_class)

@@ -40,8 +40,7 @@ from pox.ethanol.ssl_message.msg_memcpu import get_cpu_usage, get_memory_usage
 from pox.ethanol.ssl_message.msg_ap_in_range import get_ap_in_range
 from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrate
 from pox.ethanol.ssl_message.msg_uptime import get_uptime
-from pox.ethanol.ssl_message.msg_tos import tos_cleanall, tos_add,\
-    tos_replace
+from pox.ethanol.ssl_message.msg_tos import tos_cleanall, tos_add, tos_replace
 
 
 class Device(object):
@@ -379,14 +378,15 @@ class Device(object):
                     wmm_class=rule['wmm_class'])
 
     def replace_tos(self, rules):
+        print rules
         server = self.get_connection
         for rule in rules:
-            msg_tos_replace(server=server, msg_id=self.msg_id,
-                            rule_id=rule['rule_id'],
-                            intf_name=rule['intf_name'],
-                            proto=rule['proto'],
-                            sip=rule['sip'],
-                            sport=rule['sport'],
-                            dip=rule['dip'],
-                            dport=rule['dport'],
-                            wmm_class=rule['wmm_class'])
+            tos_replace(server=server, msg_id=self.msg_id,
+                        rule_id=rule['rule_id'],
+                        intf_name=rule['intf_name'],
+                        proto=rule['proto'],
+                        sip=rule['sip'],
+                        sport=rule['sport'],
+                        dip=rule['dip'],
+                        dport=rule['dport'],
+                        wmm_class=rule['wmm_class'])
