@@ -163,7 +163,6 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_GET_ACS',
                 'MSG_SET_SNR_THRESHOLD_REACHED',
                 'MSG_GET_STA_STATISTICS',
-                'MSG_GET_MEAN_STA_STATISTICS',
                 'MSG_MEAN_STA_STATISTICS_GET',
                 'MSG_MEAN_STA_STATISTICS_SET_INTERFACE',
                 'MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE',
@@ -314,3 +313,11 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
             return False, msg
     else:
         return True, None
+
+
+def len_of_string(v):
+    return 0 if v is None and not isinstance(v, str) else len(v)
+
+
+def return_from_dict(d, v, error):
+    return d[v] if v in d else error

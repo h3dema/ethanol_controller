@@ -24,7 +24,7 @@ from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_mtu_qlen = Struct('msg_mtu_qlen',
                       Embed(msg_default),  # default fields
@@ -46,19 +46,19 @@ def set_msg_mtu_qlen(server, m_type, m_id=0, sta_ip=None, sta_port=0, intf_name=
     @param intf_name: name of the interface
     """
     if intf_name is None or \
-                    m_type not in [MSG_TYPE.MSG_SET_TXQUEUELEN, MSG_TYPE.MSG_SET_MTU] or \
-            not isinstance(value, int):
+       m_type not in [MSG_TYPE.MSG_SET_TXQUEUELEN, MSG_TYPE.MSG_SET_MTU] or \
+       not isinstance(value, int):
         return
 
     msg_struct = Container(m_type=m_type,
                            m_id=m_id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           sta_ip_size=0 if sta_ip is None else len(sta_ip),
+                           sta_ip_size=len_of_string(sta_ip),
                            sta_ip=sta_ip,
                            sta_port=sta_port,
-                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
                            value=value,
                            )

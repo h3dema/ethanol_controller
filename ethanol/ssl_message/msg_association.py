@@ -32,6 +32,7 @@ from construct import If
 
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, tri_boolean
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 field_mac_ap = Struct('mac_ap',
                       SLInt32('mac_ap_size'),
@@ -62,17 +63,14 @@ def get_association(server, id=0, association_type=None, mac_sta=None, mac_ap=No
     """
     if (association_type is None) or (mac_sta is None) or (mac_ap is None):
         return None
-
-    value = None  # error
-
     msg_struct = Container(m_type=association_type,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           mac_ap_size=0 if mac_ap is None else len(mac_ap),
+                           mac_ap_size=len_of_string(mac_ap),
                            mac_ap=mac_ap,
-                           mac_sta_size=0 if mac_sta is None else len(mac_sta),
+                           mac_sta_size=len_of_string(mac_sta),
                            mac_sta=mac_sta,
                            allowed=True,
                            response=0,
@@ -109,6 +107,7 @@ def process_association(received_msg, fromaddr):
     msg = msg_association.parse(received_msg)
     mac_ap = msg['mac_ap']
     if mac_ap in registered_functions:
+        vap = register_functions[mac_ap]
         m_type = msg['m_type']
         mac_sta = msg['mac_sta']
         response = 0  # default value is accepted
@@ -130,7 +129,7 @@ def process_association(received_msg, fromaddr):
             enabled = vap.evUserConnecting(mac_sta)
     else:
         # default is to return true
-        enable = True
+        enabled = True
     msg['allowed'] = enabled
     msg['response'] = response
     return received_msg
@@ -160,10 +159,10 @@ def set_event_association(server, id=0, mac_sta=None, events=[], action=True):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_ENABLE_ASSOC_MSG,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        mac_sta_size=0 if mac_sta == None else len(mac_sta),
+        mac_sta_size=len_of_string(mac_sta),
         mac_sta=mac_sta,
         events_to_change=events_to_change,
         action=action,

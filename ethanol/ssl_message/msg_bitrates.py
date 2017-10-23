@@ -28,12 +28,12 @@ from construct import Embed
 from construct import Array, Struct, Container
 # from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_core import field_station
 from pox.ethanol.ssl_message.msg_core import field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 iw_bitrates = Struct('iw_bitrates',
                      LFloat32("bitrate"),
@@ -71,18 +71,18 @@ def get_tx_bitrates(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
       @type sta_port: int
       @return: a dictionary, the index is the band
     """
-    if intf_name == None:
+    if intf_name is None:
         raise ValueError("intf_name must have a valid value!")
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_TX_BITRATES,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         num_bands=0,  # don´t know how many bands are in the AP
@@ -131,9 +131,9 @@ def get_tx_bitrate(server, id=0, intf_name=None, sta_ip=None, sta_port=0, sta_ma
       @type sta_port: int
       @param sta_mac: if None, scan for all stations. If specified (str with MAC address dotted format), returns only the station, if connected
     """
-    if intf_name == None:
+    if intf_name is None:
         raise ValueError("intf_name must have a valid value! Received %s" % intf_name)
-    if sta_mac == None:
+    if sta_mac is None:
         raise ValueError("sta_mac must have a valid value! Received %s" % sta_mac)
     # 1) create message
     msg_struct = Container(
@@ -142,12 +142,12 @@ def get_tx_bitrate(server, id=0, intf_name=None, sta_ip=None, sta_port=0, sta_ma
         p_version_length=len(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        mac_addr_size=0 if sta_mac == None else len(sta_mac),
+        mac_addr_size=len_of_string(sta_mac),
         mac_addr=sta_mac,
         bitrate=0,
     )

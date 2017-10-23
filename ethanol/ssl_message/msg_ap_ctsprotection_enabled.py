@@ -32,7 +32,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean, len_of_string
 
 msg_ctsprotection_enabled = Struct('ctsprotection_enabled',
                                    Embed(msg_default),  # default fields
@@ -59,10 +59,10 @@ def get_ctsprotection_enabled(server, id=0, intf_name=None):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_GET_AP_BROADCASTSSID,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
                            enabled=False,
                            )
@@ -78,14 +78,14 @@ def get_ctsprotection_enabled(server, id=0, intf_name=None):
 
 def set_ctsprotection_enabled(server, id=0, intf_name=None, enable=False):
     """ enable or disable RTS/CTS mechanism
-  
+
         @param server: tuple (ip, port_num)
         @param id: message id
         @param intf_name: name of the wireless interface.
         @type intf_name: str
         @param enable: true activates RTS/CTS mechanism
         @param enable: bool
-  
+
         @return msg: received message
         @return value:
     """
@@ -96,10 +96,10 @@ def set_ctsprotection_enabled(server, id=0, intf_name=None, enable=False):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_AP_BROADCASTSSID,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         enabled=enable,
     )

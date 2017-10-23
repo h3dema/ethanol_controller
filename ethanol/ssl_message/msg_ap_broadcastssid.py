@@ -28,7 +28,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name, field_ssid
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean, len_of_string
 
 msg_ap_broadcastssid = Struct('msg_ap_broadcastssid',
                               Embed(msg_default),  # default fields
@@ -55,12 +55,12 @@ def get_broadcastssid(server, id=0, intf_name=None, ssid=None):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_GET_AP_BROADCASTSSID,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
-                           ssid_size=0 if ssid is None else len(ssid),
+                           ssid_size=len_of_string(ssid),
                            ssid=ssid,
                            enabled=False,
                            )
@@ -88,12 +88,12 @@ def set_broadcastssid(server, id=0, intf_name=None, enable=False, ssid=None):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_SET_AP_BROADCASTSSID,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
-                           ssid_size=0 if ssid is None else len(ssid),
+                           ssid_size=len_of_string(ssid),
                            ssid=ssid,
                            enabled=enable,
                            )

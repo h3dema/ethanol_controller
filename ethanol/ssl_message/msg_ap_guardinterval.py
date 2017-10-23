@@ -31,7 +31,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_ap_guardinterval = Struct('msg_ap_guardinterval',
                               Embed(msg_default),  # default fields
@@ -47,7 +47,7 @@ def get_ap_guardinterval(server, id=0, intf_name=None):
         @param id: message id
         @param intf_name: name of the wireless interface
         @type intf_name: str
-  
+
         @return msg: received message
         @return value:
     """
@@ -58,10 +58,10 @@ def get_ap_guardinterval(server, id=0, intf_name=None):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_AP_GUARDINTERVAL,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         guard_interval=-1,
     )
@@ -90,10 +90,10 @@ def set_ap_guardinterval(server, id=0, intf_name=None, guard_interval=100):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_AP_GUARDINTERVAL,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name is None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         guard_interval=guard_interval,
     )

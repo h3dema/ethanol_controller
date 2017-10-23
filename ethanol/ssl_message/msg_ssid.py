@@ -28,7 +28,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_ssid, field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 ssid_info = Struct('ssid_info',
                    Embed(field_intf_name),
@@ -63,7 +63,7 @@ def get_ssid(server, id=0, intf_name=[], sta_ip=None, sta_port=0):
     """
     ssid_info = []
     for intf in intf_name:
-        entry = Container(intf_name_size=len(intf),
+        entry = Container(intf_name_size=len_of_string(intf),
                           intf_name=intf,
                           ssid_size=0,
                           ssid=None,
@@ -74,10 +74,10 @@ def get_ssid(server, id=0, intf_name=[], sta_ip=None, sta_port=0):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_GET_AP_SSID,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           sta_ip_size=0 if sta_ip is None else len(sta_ip),
+                           sta_ip_size=len_of_string(sta_ip),
                            sta_ip=sta_ip,
                            sta_port=sta_port,
                            num_ssids=num_ssids,

@@ -30,7 +30,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 field_current_ap = Struct('current_ap',
                           SLInt32('current_ap_size'),
@@ -57,19 +57,19 @@ def changed_ap(server, id=0, status=0, current_ap=None, intf_name=None):
       @param current_ap: MAC address of the ap
       @type current_ap: str
     """
-    if (intf_name == None) or (current_ap == None):
+    if (intf_name is None) or (current_ap is None):
         return
 
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_CHANGED_AP,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        current_ap_size=0 if current_ap == None else len(current_ap),
+        current_ap_size=len_of_string(current_ap),
         current_ap=current_ap,
         status=status,
     )
@@ -83,5 +83,5 @@ def process_hello(received_msg, fromaddr):
       @param fromaddr: IP address from the device that sent this message
     """
     msg = msg_changed_ap.parse(received_msg)
-    log.debug("Changed AP: status: %d - current ap: %s - interface: %s " % (
-    msg["status"], msg["current_ap"], msg["intf_name"]))
+    print "Changed AP: status: %d - current ap: %s - interface: %s " % \
+          (msg["status"], msg["current_ap"], msg["intf_name"])

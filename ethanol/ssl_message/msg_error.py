@@ -22,6 +22,7 @@ from construct import Container
 
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, MSG_ERROR_TYPE
 from pox.ethanol.ssl_message.msg_common import VERSION
+from pox.ethanol.ssl_message.msg_common import len_of_string
 from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
 
 msg_error = Struct('msg_error',
@@ -39,7 +40,7 @@ def return_error_msg_struct(m_id, error_type=MSG_ERROR_TYPE.ERROR_UNKNOWN):
     """
     msg_struct = Container(m_type=MSG_TYPE.MSG_ERR_TYPE,
                            m_id=m_id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
                            error_type=error_type,

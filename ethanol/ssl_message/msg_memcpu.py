@@ -26,11 +26,11 @@ from construct import SLInt64
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_memcpu = Struct('msg_memcpu',
                     Embed(msg_default),  # default fields
@@ -43,7 +43,7 @@ msg_memcpu = Struct('msg_memcpu',
 """
 
 
-def get_memcpu(server, id=0, type=None, sta_ip=None, sta_port=0):
+def __get_memcpu(server, id=0, type=None, sta_ip=None, sta_port=0):
     """ INTERNAL FUNCTION: don't call it
         @param server: tuple (ip, port_num)
         @param id: message id
@@ -59,10 +59,10 @@ def get_memcpu(server, id=0, type=None, sta_ip=None, sta_port=0):
     msg_struct = Container(
         m_type=type,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip is None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         value=0
@@ -90,7 +90,7 @@ def get_memory_usage(server, id=0, sta_ip=None, sta_port=0):
         @param sta_port: socket port of the station
         @return: msg, memory usage in percent
     """
-    return get_memcpu(server=server, id=id, type=MSG_TYPE.MSG_GET_MEMORY, sta_ip=sta_ip, sta_port=sta_port)
+    return __get_memcpu(server=server, id=id, type=MSG_TYPE.MSG_GET_MEMORY, sta_ip=sta_ip, sta_port=sta_port)
 
 
 def get_cpu_usage(server, id=0, sta_ip=None, sta_port=0):
@@ -102,4 +102,4 @@ def get_cpu_usage(server, id=0, sta_ip=None, sta_port=0):
         @param sta_port: socket port of the station
         @return: msg, cpu usage in percent
     """
-    return get_memcpu(server=server, id=id, type=MSG_TYPE.MSG_GET_CPU, sta_ip=sta_ip, sta_port=sta_port)
+    return __get_memcpu(server=server, id=id, type=MSG_TYPE.MSG_GET_CPU, sta_ip=sta_ip, sta_port=sta_port)

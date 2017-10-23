@@ -25,7 +25,7 @@ from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_common import is_error_msg, get_error_msg
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, BUFFER_SIZE, SERVER_PORT
 from pox.ethanol.ssl_message.msg_common import hexadecimal
-from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
+from pox.ethanol.ssl_message.msg_common import connect_ssl_socket, len_of_string
 from pox.ethanol.ssl_message.msg_log import log
 
 from pox.ethanol.ethanol.ap import add_ap
@@ -60,7 +60,7 @@ def send_msg_hello(server, m_id=0):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_HELLO_TYPE,
                            m_id=m_id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
                            device_type=0,
@@ -103,14 +103,16 @@ def process_hello(received_msg, fromaddr):
     client_port = msg['tcp_port']
     client_socket = (fromaddr[0], client_port)
 
-    log.debug("recebeu mensagem de Hello.")
+    log.debug("Hello msg received.")
     if msg['device_type'] == 1:
         # create ap object
-        log.debug("\tConectar ao AP via %s:%d" % client_socket)
-        add_ap(client_socket)  # returns ap
+        log.debug("\tConnect to AP @ %s:%d" % client_socket)
+        ap = add_ap(client_socket)  # returns ap
+        log.debug("AP %s" % ap)
     elif msg['device_type'] == 2:
-        log.info("Conectar a estacao via %s:%d" % client_socket)
+        log.info("Connect to STA @ %s:%d" % client_socket)
         station = add_station(client_socket)
+        log.debug("Station %s" % station)
 
     events_hello.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
 
@@ -119,7 +121,7 @@ def process_hello(received_msg, fromaddr):
 
 
 def bogus_hello_on_change(**kwargs):
-    log.debug("hello message received: %s" % kwargs['fromaddr'] if 'fromaddr' in kwargs else "")
+    log.debug("hello message received: %s" % kwargs['fromaddr'][0] if 'fromaddr' in kwargs else "")
 
 
 # add a bogus procedure

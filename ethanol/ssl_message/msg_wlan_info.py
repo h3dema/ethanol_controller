@@ -15,15 +15,13 @@
 
 @requires: construct 2.5.2
 """
-from datetime import datetime
-from construct import ULInt32, SLInt32, ULInt64, SLInt64, CString
+from construct import ULInt32, SLInt32, ULInt64
 from construct import Embed, Struct, Container, Array
-from construct import If
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_mac_addr, field_ssid, field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 # ###############################################################
 #
@@ -70,7 +68,7 @@ def req_wlan_info(server, id=0, intf_name_list=None, sta_ip=None, sta_port=0):
 
       @return: msg - received message
     """
-    if intf_name_list == None:
+    if intf_name_list is None:
         return None, None
 
     """
@@ -81,7 +79,7 @@ def req_wlan_info(server, id=0, intf_name_list=None, sta_ip=None, sta_port=0):
     for intf in intf_name_list:
         entry = Container(
             ifindex=0,
-            intf_name_size=len(intf),
+            intf_name_size=len_of_string(intf),
             intf_name=intf,
             wlan_indx=0,
             phy_indx=0,
@@ -107,7 +105,7 @@ def req_wlan_info(server, id=0, intf_name_list=None, sta_ip=None, sta_port=0):
         p_version_length=len(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         num_entries=num_entries,

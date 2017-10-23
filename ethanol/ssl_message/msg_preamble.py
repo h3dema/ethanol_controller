@@ -16,16 +16,13 @@
 
 @requires: construct 2.5.2
 """
-from datetime import datetime
-from construct import SLInt32, LFloat32, CString
+from construct import SLInt32
 from construct import Embed, Struct, Container
-from construct import If
 
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
-from pox.ethanol.ssl_message.msg_common import DEFAULT_WIFI_INTFNAME
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_preamble = Struct('msg_preamble',
                       Embed(msg_default),  # default fields
@@ -34,7 +31,7 @@ msg_preamble = Struct('msg_preamble',
                       )
 
 
-def get_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME):
+def get_preamble(server, id=0, intf_name=None):
     """ gets if the configured preamble is long or short
       @param server: tuple (ip, port_num)
       @param id: message id
@@ -44,13 +41,15 @@ def get_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME):
       @return: msg - received message
     """
     # 1) create message
+    if intf_name is None:
+        return
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_PREAMBLE,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         preamble=0
     )
@@ -63,7 +62,7 @@ def get_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME):
     return msg, value
 
 
-def set_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME, preamble=0):
+def set_preamble(server, id=0, intf_name=None, preamble=0):
     """ set the preamble used in some interface
         0 = preamble LONG | 1 = preamble SHORT
       @param server: tuple (ip, port_num)
@@ -75,16 +74,19 @@ def set_preamble(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME, preamble=0):
 
       @return: msg - received message
     """
-    if preamble != 1: preamble = 0  # default equals LONG
+    if intf_name is None:
+        return
+    if preamble != 1:
+        preamble = 0  # default equals LONG
 
     # create message container
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_PREAMBLE,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         preamble=preamble
     )

@@ -28,7 +28,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 # ###############################################################
 #
@@ -69,7 +69,7 @@ def get_radio_wlans(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
       @return: value
     """
     value = []
-    """  
+    """
       returns the value
       None equals an error has occured (or no interface found)
     """
@@ -78,10 +78,10 @@ def get_radio_wlans(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_RADIO_WLANS,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         num_wlans=0,

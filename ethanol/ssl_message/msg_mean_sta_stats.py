@@ -28,14 +28,14 @@ no process is implemented: the controller is not supposed to respond to these me
 """
 
 from construct import SLInt32, SLInt64, CString, LFloat64
-from construct import Embed, If
+from construct import Embed
 from construct import Struct
 from construct import Container, Array
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 mean_net_statistics = Struct('mean_net_statistics',
                              LFloat64('collisions'),
@@ -89,10 +89,10 @@ def send_msg_mean_sta_statistics(server, id=0, sta_ip=None, sta_port=0):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_MEAN_STA_STATISTICS_GET,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         num=0,
@@ -135,13 +135,13 @@ def send_msg_mean_sta_statistics_interface_add(server, id=0, sta_ip=None, sta_po
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_INTERFACE,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
     )
     send_and_receive_msg(server, msg_struct, msg_mean_sta_statistics_interface.build,
@@ -166,13 +166,13 @@ def send_msg_mean_sta_statistics_interface_remove(server, id=0, sta_ip=None, sta
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
     )
     send_and_receive_msg(server, msg_struct, msg_mean_sta_statistics_interface.build,
@@ -200,21 +200,23 @@ def send_msg_mean_sta_statistics_alpha(server, id=0, sta_ip=None, sta_port=0, al
 
       @return: msg - received message
     """
-    if intf_name is None:
+    if not(isinstance(alpha, float) or isinstance(alpha, int)):
         return
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_ALPHA,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         alpha=alpha,
     )
-    ssend_and_receive_msg(server, msg_struct, msg_mean_sta_statistics_alpha.build, msg_mean_sta_statistics_alpha.parse,
-                          only_send=True)
+    send_and_receive_msg(server, msg_struct,
+                         msg_mean_sta_statistics_alpha.build,
+                         msg_mean_sta_statistics_alpha.parse,
+                         only_send=True)
 
 
 msg_mean_sta_statistics_time = Struct('msg_mean_sta_statistics_time',
@@ -238,18 +240,20 @@ def send_msg_mean_sta_statistics_time(server, id=0, sta_ip=None, sta_port=0, mse
 
       @return: msg - received message
     """
-    if intf_name is None:
+    if not isinstance(msec, int):
         return
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_TIME,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         msec=msec,
     )
-    ssend_and_receive_msg(server, msg_struct, msg_mean_sta_statistics_time.build, msg_mean_sta_statistics_time.parse,
-                          only_send=True)
+    send_and_receive_msg(server, msg_struct,
+                         msg_mean_sta_statistics_time.build,
+                         msg_mean_sta_statistics_time.parse,
+                         only_send=True)

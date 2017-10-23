@@ -20,7 +20,7 @@ from construct import Container
 
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 from pox.ethanol.events import Events
 
@@ -46,14 +46,12 @@ def send_msg_bye(server, id=0, tcp_port=None):
     if (tcp_port is None):
         return None  # error
 
-    ssl_sock = connect_ssl_socket(server)
-
     # print "send_msg_bye id:", id
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_BYE_TYPE,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
         tcp_port=tcp_port,
@@ -69,9 +67,6 @@ def process_bye(received_msg, fromaddr):
        @param func_bye: event
     """
     msg = msg_bye.parse(received_msg)
-    if (func_bye is not None):
-        func_bye(fromaddr, msg["tcp_port"])
-
     events_bye.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
 
     return received_msg
@@ -79,8 +74,8 @@ def process_bye(received_msg, fromaddr):
 
 def bogus_bye_on_change(**kwargs):
     print "bye message received: ",
-    if fromaddr in kwargs:
-        print fromaddr
+    if 'fromaddr' in kwargs:
+        print kwargs['fromaddr']
     else:
         print
 

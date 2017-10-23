@@ -27,11 +27,11 @@ from construct import SLInt64
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_snr_power = Struct('msg_snr_power',
                        Embed(msg_default),  # default fields
@@ -59,19 +59,20 @@ def get_snr_power(server, id=0, intf_name=None, sta_ip=None, sta_port=0, m_type=
       -1 equals an error has occured
     """
 
-    if intf_name == None or m_type not in [MSG_TYPE.MSG_GET_SNR, MSG_TYPE.MSG_GET_TXPOWER]:
+    if intf_name is None or \
+       m_type not in [MSG_TYPE.MSG_GET_SNR, MSG_TYPE.MSG_GET_TXPOWER]:
         return None, -1
 
     # 1) create message
     msg_struct = Container(
         m_type=m_type,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         value=0
@@ -133,7 +134,7 @@ def set_txpower(server, id=0, intf_name=None, sta_ip=None, sta_port=0, txpower=N
       @param sta_port: socket port number of the station
       @type sta_port: int
     """
-    if txpower == None and isinstance(txpower, int):
+    if txpower is None and isinstance(txpower, int):
         return
 
     # 1) create message
@@ -143,13 +144,11 @@ def set_txpower(server, id=0, intf_name=None, sta_ip=None, sta_port=0, txpower=N
         p_version_length=len(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         value=txpower
     )
-
-    msg = msg_snr_power.build(msg_struct)
     send_and_receive_msg(server, msg_struct, msg_snr_power.build, msg_snr_power.parse, only_send=True)

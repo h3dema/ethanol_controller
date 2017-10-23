@@ -23,14 +23,11 @@ from construct import SLInt32, SLInt64, CString
 from construct import Embed, If
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
-from decimal import Decimal
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
-
-from pox.ethanol.ethanol.ap import add_ap
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string, return_from_dict
 
 field_time_stamp = Struct('time_stamp',
                           SLInt32('time_stamp_size'),
@@ -76,19 +73,19 @@ def send_msg_get_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=
 
       @return: msg - received message
     """
-    if intf_name == None:
+    if intf_name is None:
         return None, -1, -1, -1, -1, -1, None
 
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_STATISTICS,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         rx_packets=0,
@@ -106,15 +103,15 @@ def send_msg_get_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=
     error, msg = send_and_receive_msg(server, msg_struct, msg_statistics.build, msg_statistics.parse)
     # print msg
     if not error:
-        rx_packets = msg['rx_packets'] if 'rx_packets' in msg else -1
-        rx_bytes = msg['rx_bytes'] if 'rx_bytes' in msg else -1
-        rx_dropped = msg['rx_dropped'] if 'rx_dropped' in msg else -1
-        rx_errors = msg['rx_errors'] if 'rx_errors' in msg else -1
-        tx_packets = msg['tx_packets'] if 'tx_packets' in msg else -1
-        tx_bytes = msg['tx_bytes'] if 'tx_bytes' in msg else -1
-        tx_dropped = msg['tx_dropped'] if 'tx_dropped' in msg else -1
-        tx_errors = msg['tx_errors'] if 'tx_errors' in msg else -1
-        time_stamp = msg['time_stamp'] if 'time_stamp' in msg else None
+        rx_packets = return_from_dict(msg, 'rx_packets', -1)
+        rx_bytes = return_from_dict(msg, 'rx_bytes', -1)
+        rx_dropped = return_from_dict(msg, 'rx_dropped', -1)
+        rx_errors = return_from_dict(msg, 'rx_errors', -1)
+        tx_packets = return_from_dict(msg, 'tx_packets', -1)
+        tx_bytes = return_from_dict(msg, 'tx_bytes', -1)
+        tx_dropped = return_from_dict(msg, 'tx_dropped', -1)
+        tx_errors = return_from_dict(msg, 'tx_errors', -1)
+        time_stamp = return_from_dict(msg, 'time_stamp', -1)
     else:
         rx_packets = -1
         rx_bytes = -1

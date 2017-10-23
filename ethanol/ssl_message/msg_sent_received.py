@@ -33,13 +33,11 @@ from construct import SLInt64
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import msg_default, field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
-
-from pox.ethanol.ethanol.ap import add_ap
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_sent_received = Struct('msg_sent_received',
                            Embed(msg_default),  # default fields
@@ -57,7 +55,7 @@ supported_messages = [
     MSG_TYPE.MSG_GET_PACKETSSENT,
     MSG_TYPE.MSG_GET_PACKETSLOST,
 ]
-""" this module deals with multiple message types. these types are listed in supported_messages 
+""" this module deals with multiple message types. these types are listed in supported_messages
 """
 
 
@@ -76,19 +74,19 @@ def send_msg_sent_received(server, id=0, type=None, intf_name=None, sta_ip=None,
       @return: msg - received message
           value (bytes or packets received or sent or lost)
     """
-    if (type == None) or (type not in supported_messages):
-        return None, value  # nothing to do if the message type is not defined
+    if (type is None) or (type not in supported_messages):
+        return None, None  # nothing to do if the message type is not defined
 
     # 1) create message
     msg_struct = Container(
         m_type=type,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         value=0
@@ -196,7 +194,7 @@ def send_msg_get_packetslost(server, id=0, intf_name=None, sta_ip=None, sta_port
 # exemplo diferente
 """
 def send_msg_get_packetslost(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
-    return send_msg_sent_received(server=server, id=id, 
+    return send_msg_sent_received(server=server, id=id,
                   type=MSG_TYPE.MSG_GET_PACKETSLOST,
                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
 """

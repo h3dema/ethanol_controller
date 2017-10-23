@@ -28,7 +28,8 @@ from construct import Struct, Container, Array
 
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, field_mac_addr
-from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, send_and_receive_msg, tri_boolean
+from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, tri_boolean, len_of_string
 
 intfs = Struct('intfs',
                SLInt64('ifindex'),
@@ -78,7 +79,7 @@ def __get_intf(server, m_id=0, intf_name=[], sta_ip=None, sta_port=0, m_type=Non
     intfs = []
     for intf in intf_name:
         entry = Container(ifindex=0,
-                          intf_name_size=0 if intf_name is None else len(intf_name),
+                          intf_name_size=len_of_string(intf_name),
                           intf_name=intf_name,
                           intf_type=0,
                           mac_addr_size=0,
@@ -91,10 +92,10 @@ def __get_intf(server, m_id=0, intf_name=[], sta_ip=None, sta_port=0, m_type=Non
     # 1) create message
     msg_struct = Container(m_type=m_type,
                            m_id=m_id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           sta_ip_size=0 if sta_ip is None else len(sta_ip),
+                           sta_ip_size=len_of_string(sta_ip),
                            sta_ip=sta_ip,
                            sta_port=sta_port,
                            num_intf=num_intf,

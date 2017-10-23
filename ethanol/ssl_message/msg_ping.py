@@ -4,7 +4,7 @@
 """ implements:
 
 * process_msg_ping(): generates a pong message in response to a received ping message
-  
+
 * send_msg_ping(): send a ping to another device
 
 @note: see msg_ping.h in hostapd/src/messaging
@@ -28,7 +28,7 @@ from construct import If
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION, BUFFER_SIZE
 from pox.ethanol.ssl_message.msg_common import connect_ssl_socket
-from pox.ethanol.ssl_message.msg_common import is_error_msg, tri_boolean
+from pox.ethanol.ssl_message.msg_common import is_error_msg, tri_boolean, len_of_string
 
 msg_ping = Struct('msg_ping',
                   Embed(msg_default),  # default fields
@@ -103,7 +103,7 @@ def send_msg_ping(server, id=0, num_tries=1, p_size=64):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_PING,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
         data_size=p_size
@@ -133,7 +133,7 @@ def process_msg_ping(received_msg, fromaddr):
     result = Container(
         m_type=MSG_TYPE.MSG_PONG,
         m_id=msg['m_id'],
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
         rtt=0,

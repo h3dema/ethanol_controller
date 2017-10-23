@@ -16,16 +16,17 @@
 @requires: construct 2.5.2
 """
 
-from construct import SLInt32, SLInt64
-from construct import Embed
+from construct import SLInt32, SLInt64, CString
+from construct import Embed, If
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_intf_name, field_station, \
-    field_mac_addr
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_intf_name, field_station
+from pox.ethanol.ssl_message.msg_core import field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 from pox.ethanol.events import Events
 
@@ -60,27 +61,29 @@ In the receiving message (inside process), it contains the ap that the stations 
 """
 
 
-def set_snr_threshold(server, id=0, sta_ip=None, sta_port=0, sta_mac=None, intf_name=None, mac_ap=None):
+def snr_threshold_reached(server, id=0, sta_ip=None, sta_port=0, sta_mac=None, intf_name=None, mac_ap=None, snr=None):
     """ send information to controller. this implementation will 'never' be used in its python form
 
       @param server: tuple (ip, port_num)
       @param id: message id
 
     """
+    if snr is None or not(isinstance(snr, int) or isinstance(snr, float)):
+        return None
     msg_struct = Container(
-        m_type=type,
+        m_type=MSG_TYPE.MSG_SET_SNR_THRESHOLD_REACHED,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        mac_addr_size=len(sta_mac),
+        mac_addr_size=len_of_string(sta_mac),
         mac_addr=sta_mac,
-        intf_name_size=len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        mac_ap_size=len(mac_ap),
+        mac_ap_size=len_of_string(mac_ap),
         mac_ap=mac_ap,
         snr=snr,
     )
@@ -91,10 +94,13 @@ def set_snr_threshold(server, id=0, sta_ip=None, sta_port=0, sta_mac=None, intf_
     return msg
 
 
-def process_snr_threshold(receivedmsg, fromaddr):
+def process_snr_threshold(received_msg, fromaddr):
     msg = msg_snr_threshold_reached.parse(received_msg)
-    events_snr_threshold_reached.on_change(msg=msg, fromaddr=fromaddr, sta_mac=sta_mac, intf_name=intf_name,
-                                           mac_ap=mac_ap)
+    events_snr_threshold_reached.on_change(msg=msg,
+                                           fromaddr=msg['fromaddr'],
+                                           sta_mac=msg['sta_mac'],
+                                           intf_name=msg['intf_name'],
+                                           mac_ap=msg['mac_ap'])
 
     # TODO: define the new ap
     new_ap = None
@@ -104,8 +110,8 @@ def process_snr_threshold(receivedmsg, fromaddr):
 
 def bogus_snr_threshold_reached_on_change(**kwargs):
     print "snr_threshold_reached message received: ",
-    if fromaddr in kwargs:
-        print fromaddr
+    if 'fromaddr' in kwargs:
+        print kwargs['fromaddr']
     else:
         print
 
@@ -132,17 +138,17 @@ def snr_threshold_interval_reached(server, id=0, sta_ip=None, sta_port=0, intf_n
       @type interval: int
     """
     if interval <= 0:
-        interval = -1;  # disable
+        interval = -1  # disable
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_SNR_INTERVAL,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        intf_name_size=len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         interval=interval,
     )
@@ -171,13 +177,13 @@ def set_snr_threshold(server, id=0, sta_ip=None, sta_port=0, intf_name=None, thr
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_SNR_THRESHOLD,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        sta_ip_size=len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
-        intf_name_size=len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         threshold=threshold,
     )

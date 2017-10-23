@@ -63,7 +63,7 @@ def add_station(client_address):
 
 
 def get_station_by_mac_address(mac_address):
-    """returns a connected station, provided its mac address"""
+    """returns a connected station (object), provided its mac address"""
     for intf_name in list_of_stations:
         for sta in list_of_stations[intf_name]:
             if sta.mac_address == mac_address:
@@ -72,7 +72,11 @@ def get_station_by_mac_address(mac_address):
 
 
 def get_station_by_ip(ip):
-    """returns a connected station, provided its ip address"""
+    """returns a dictionary containing the connected station,
+       provided its ip address
+       note: that the object are indexed by the intf_name, in case the station has multiple wireless interfaces
+       e.g. list_of_stations[ip]['wlan0']
+       """
     if ip not in list_of_stations:
         return None
     else:

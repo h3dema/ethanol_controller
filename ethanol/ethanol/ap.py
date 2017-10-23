@@ -96,7 +96,7 @@ def get_vap_by_mac_address(mac_address):
             fvap = [vp for vp in ap.vaps if vp.mac_address == mac_address]
             if len(fvap) > 0:
                 vap = fvap[0]
-                log.info(" VAP %d encontrada e anexada" % vap)
+                log.info(" VAP %s encontrada e anexada" % vap)
                 break
     return vap
 

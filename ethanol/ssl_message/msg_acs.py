@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-implements the following messages: 
+implements the following messages:
 
 * get_acs
 
@@ -12,7 +12,7 @@ no process is implemented: the controller is not supposed to respond to these me
 @organization: WINET/DCC/UFMG
 @copyright: h3dema (c) 2017
 @contact: henriquemoura@hotmail.com
-@licence: GNU General Public License v2.0 
+@licence: GNU General Public License v2.0
 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 @since: July 2015
 @status: in development
@@ -25,12 +25,12 @@ from construct import Embed
 from construct import Array
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name, field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_acs = Struct('msg_ap_in_range',
                  Embed(msg_default),  # default fields
@@ -61,7 +61,7 @@ def get_acs(server, id=0, intf_name=None, sta_ip=None, sta_port=0, num_tests=1):
         @return num_chan: number of channels scanned by the device
         @return acs: list of acs factor for each channels
     """
-    if intf_name == None:
+    if intf_name is None:
         return None, 0, []
     if num_tests < 1:
         num_tests = 1  # at least one test
@@ -73,9 +73,9 @@ def get_acs(server, id=0, intf_name=None, sta_ip=None, sta_port=0, num_tests=1):
         p_version_length=len(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         num_tests=num_tests,

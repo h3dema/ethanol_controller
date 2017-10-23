@@ -30,7 +30,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_tos_cleanall = Struct('msg_tos_cleanall',
                           Embed(msg_default),  # default fields
@@ -39,7 +39,7 @@ msg_tos_cleanall = Struct('msg_tos_cleanall',
 """ message to clear mange rules """
 
 
-def msg_tos_cleanall(server, id=0):
+def tos_cleanall(server, id=0):
     """ msg_tos_cleanall uptime
 
       @param server: tuple (ip, port_num)
@@ -84,31 +84,40 @@ def __msg_tos(server, m_type, msg_id=0, rule_id=-1, intf_name=None,
             (proto is None) or (wmm_class not in range(8)) or \
             (m_type not in [MSG_TYPE.MSG_TOS_ADD, MSG_TYPE.MSG_TOS_REPLACE]):
         return
-
+    print "\n\n\n esta aqui"
+    if isinstance(dport, int):
+        dport = str(dport)
+    if isinstance(dport, int):
+        sport = str(sport)
     msg_struct = Container(m_type=m_type,
                            m_id=msg_id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
                            rule_id=rule_id,
-                           intf_name_size=len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
-                           proto_size=len(proto),
+                           proto_size=len_of_string(proto),
                            proto=proto,
-                           sip_size=len(sip),
+                           sip_size=len_of_string(sip),
                            sip=sip,
-                           sport_size=len(sport),
+                           sport_size=len_of_string(sport),
                            sport=sport,
-                           dip_size=len(dip),
+                           dip_size=len_of_string(dip),
                            dip=dip,
-                           dport_size=len(dport),
+                           dport_size=len_of_string(dport),
                            dport=dport,
                            wmm_class=wmm_class,
                            )
+    print "vai enviar ", m_type
     send_and_receive_msg(server, msg_struct, msg_tos.build, msg_tos.parse, only_send=True)
+    print "retornou"
 
 
-def msg_tos_add(server, msg_id=0, intf_name=None, proto=None, sip=None, sport=None, dip=None, dport=None, wmm_class=0):
+def tos_add(server, msg_id=0, intf_name=None, proto=None,
+            sip=None, sport=None,
+            dip=None, dport=None,
+            wmm_class=0):
     """ add TOS rule
 
       @param server: tuple (ip, port_num)
@@ -122,8 +131,10 @@ def msg_tos_add(server, msg_id=0, intf_name=None, proto=None, sip=None, sport=No
               wmm_class=wmm_class)
 
 
-def msg_tos_replace(server, msg_id=0, rule_id=-1, intf_name=None, proto=None, sip=None, sport=None, dip=None,
-                    dport=None, wmm_class=0):
+def tos_replace(server, msg_id=0, rule_id=-1, intf_name=None, proto=None,
+                sip=None, sport=None,
+                dip=None, dport=None,
+                wmm_class=0):
     """ msg_tos_cleanall uptime
 
       @param server: tuple (ip, port_num)

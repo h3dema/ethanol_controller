@@ -22,13 +22,13 @@ no process is implemented: the controller is not supposed to answer these messag
 """
 
 from construct import ULInt32, Embed
-from construct import Array, Struct, Container
-from construct.debug import Probe
+from construct import Struct, Container
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_intf_name, field_station, field_ssid
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_frequency = Struct('msg_frequency',
                        Embed(msg_default),  # default fields
@@ -59,14 +59,14 @@ def get_frequency(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_FREQUENCY,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
         ssid_size=0,
         ssid=None,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         frequency=0,
@@ -97,20 +97,20 @@ def set_currentchannel(server, id=0, frequency=None, intf_name=None, sta_ip=None
 
       @return: msg - received message
   """
-    if frequency == None or not isinstance(frequency, int):
+    if frequency is None or not isinstance(frequency, int):
         return
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_SET_FREQUENCY,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
         ssid_size=0,
         ssid=None,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         frequency=frequency,

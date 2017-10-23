@@ -23,14 +23,14 @@ from construct import SLInt32, CString
 from construct import Embed
 from construct import Struct
 from construct import Container, If
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields, field_mac_addr, field_intf_name, \
-    field_station
+from pox.ethanol.ssl_message.msg_core import msg_default
+from pox.ethanol.ssl_message.msg_core import field_mac_addr
+from pox.ethanol.ssl_message.msg_core import field_intf_name
+from pox.ethanol.ssl_message.msg_core import field_station
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
-
-from pox.ethanol.ethanol.ap import add_ap
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 field_mac_new_ap = Struct('mac_new_ap',
                           SLInt32('mac_new_ap_size'),
@@ -52,28 +52,28 @@ msg_station_trigger_transition = Struct('msg_station_trigger_transition',
 """ message structure common to all supported_messages messages"""
 
 
-def station_trigger_transition(server, id=0, sta_ip=None, sta_port=0, sta_mac=None, intf_name=None, mac_new_ap=None):
+def station_trigger_transition(server, id=0, sta_ip=None, sta_port=0,
+                               sta_mac=None, intf_name=None, mac_new_ap=None):
     """ sendo command to station to change to a new ap
 
       @param server: tuple (ip, port_num)
       @param id: message id
 
     """
-    msg_struct = Container(
-        m_type=MSG_TYPE.MSG_TRIGGER_TRANSITION,
-        m_id=id,
-        p_version_length=len(VERSION),
-        p_version=VERSION,
-        m_size=0,
-        sta_ip_size=len(sta_ip),
-        sta_ip=sta_ip,
-        sta_port=sta_port,
-        mac_addr_size=len(sta_mac),
-        mac_addr=sta_mac,
-        intf_name_size=len(intf_name),
-        intf_name=intf_name,
-        mac_new_ap_size=len(mac_new_ap),
-        mac_new_ap=mac_new_ap,
-    )
+    msg_struct = Container(m_type=MSG_TYPE.MSG_TRIGGER_TRANSITION,
+                           m_id=id,
+                           p_version_length=len_of_string(VERSION),
+                           p_version=VERSION,
+                           m_size=0,
+                           sta_ip_size=len_of_string(sta_ip),
+                           sta_ip=sta_ip,
+                           sta_port=sta_port,
+                           mac_addr_size=len_of_string(sta_mac),
+                           mac_addr=sta_mac,
+                           intf_name_size=len_of_string(intf_name),
+                           intf_name=intf_name,
+                           mac_new_ap_size=len_of_string(mac_new_ap),
+                           mac_new_ap=mac_new_ap,
+                           )
     error, msg = send_and_receive_msg(server, msg_struct, msg_station_trigger_transition.build,
                                       msg_station_trigger_transition.parse, only_send=True)

@@ -23,12 +23,12 @@ from construct import SLInt32
 from construct import Embed
 from construct import Struct
 from construct import Container
-from construct.debug import Probe
+# from construct.debug import Probe
 
-from pox.ethanol.ssl_message.msg_core import msg_default, decode_default_fields
+from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_ssid, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 msg_sta_link_info = Struct('msg_sta_link_info',
                            Embed(msg_default),
@@ -58,30 +58,29 @@ def get_sta_link_info(server, id=0, sta_ip=None, sta_port=0, intf_name=None):
 
       @return: msg - received message
     """
-    if intf_name == None:
+    if intf_name is None:
         return None, None, None, None, None
 
     # 1) create message
     msg_struct = Container(
         m_type=MSG_TYPE.MSG_GET_LINK_INFO,
         m_id=id,
-        p_version_length=len(VERSION),
+        p_version_length=len_of_string(VERSION),
         p_version=VERSION,
         m_size=0,
-        intf_name_size=0 if intf_name == None else len(intf_name),
+        intf_name_size=len_of_string(intf_name),
         intf_name=intf_name,
         ssid=None,
         ssid_size=0,
         mac_addr=None,
         mac_addr_size=0,
-        sta_ip_size=0 if sta_ip == None else len(sta_ip),
+        sta_ip_size=len_of_string(sta_ip),
         sta_ip=sta_ip,
         sta_port=sta_port,
         frequency=0,
     )
     error, msg = send_and_receive_msg(server, msg_struct, msg_sta_link_info.build, msg_sta_link_info.parse)
     if not error:
-        value = msg['beacon_interval'] if 'beacon_interval' in msg else []
         mac_addr = msg['mac_addr'] if 'mac_addr' in msg else None
         ssid = msg['ssid'] if 'ssid' in msg else None
         freq = msg['frequency'] if 'frequency' in msg else -1

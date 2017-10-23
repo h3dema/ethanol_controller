@@ -28,7 +28,7 @@ from construct import Container
 from pox.ethanol.ssl_message.msg_core import msg_default
 from pox.ethanol.ssl_message.msg_core import field_station, field_intf_name, field_mac_addr
 from pox.ethanol.ssl_message.msg_common import MSG_TYPE, VERSION
-from pox.ethanol.ssl_message.msg_common import send_and_receive_msg
+from pox.ethanol.ssl_message.msg_common import send_and_receive_msg, len_of_string
 
 field_time_stamp = Struct('time_stamp',
                           SLInt32('time_stamp_size'),
@@ -86,12 +86,12 @@ def get_sta_statistics(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
     # 1) create message
     msg_struct = Container(m_type=MSG_TYPE.MSG_GET_STA_STATISTICS,
                            m_id=id,
-                           p_version_length=len(VERSION),
+                           p_version_length=len_of_string(VERSION),
                            p_version=VERSION,
                            m_size=0,
-                           intf_name_size=0 if intf_name is None else len(intf_name),
+                           intf_name_size=len_of_string(intf_name),
                            intf_name=intf_name,
-                           sta_ip_size=0 if sta_ip is None else len(sta_ip),
+                           sta_ip_size=len_of_string(sta_ip),
                            sta_ip=sta_ip,
                            sta_port=sta_port,
                            num_stats=0,
