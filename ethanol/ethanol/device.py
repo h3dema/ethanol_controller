@@ -378,7 +378,6 @@ class Device(object):
                     wmm_class=rule['wmm_class'])
 
     def replace_tos(self, rules):
-        print rules
         server = self.get_connection
         for rule in rules:
             tos_replace(server=server, msg_id=self.msg_id,
