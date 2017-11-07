@@ -153,7 +153,7 @@ def run(server):
                 t.start()
             except:
                 error_found = sys.exc_info()[0]
-                print "Error: ", error_found
+                print "Error: ", str(error_found)
 
     return 0
 

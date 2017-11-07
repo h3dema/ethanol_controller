@@ -20,5 +20,5 @@
 # make installdocs
 
 epydoc --pdf  --graph all *
-cd ./documentation
-rm -f *.aux *.tex *.ps *.toc *.ind *.dvi *.idx *.out *.ilg *.log
+mv pdf/api.pdf documentation/api.pdf
+rm -fr pdf
