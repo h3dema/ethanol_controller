@@ -285,18 +285,31 @@ class Radio(object):
         return value
 
     def getLinkStatitics(self):
-        """not implemented yet"""
+        """ not implemented yet """
         # call ap to get information
-        server = self.__get_connection()  # allows to send message to the AP
         return None
 
     def getACS(self, num_tests=1):
-        ''' request that the AP computes the ACS factor for each frequency
+        """ request that the AP computes the ACS factor for each frequency
         in the intf_name interface
-        '''
+        """
         server = self.__get_connection()
         msg, num_chan, acs = get_acs(server, id=self.msg_id,
                                      intf_name=self.__wiphy_name,
                                      num_tests=num_tests)
         log.debug("ACS message received with %d channels", num_chan)
         return num_chan, acs
+
+    def define_msg_to_capture(self, rules, func):
+        """ this register in the AP rules to send all matched wireless messages to the Ethanol controller
+            @param func: handler function for this messages
+                   the function has one parameter: func(received_frame)
+            @param rules: a list of rules - each rule identifies a type of wireless frame that should be sent to the controller
+        """
+        pass
+
+    def send_frame(self, frame):
+        """ calls the AP so it sends the frame
+            @param frame: fully formatted (binary) frame to be sent by the AP
+        """
+        pass

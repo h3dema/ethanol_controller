@@ -54,6 +54,7 @@ def add_network(ssid, net):
     """ returns True if successfully added the network to the set.
       False if the SSID of the network provided already exists.
       net is also not added to the set
+      @return boolean
     """
     # ssid = net.__SSID
     global __list_of_networks
@@ -67,8 +68,8 @@ def add_network(ssid, net):
 
 
 def del_network(net):
-    """ delete this network.
-      disconfigures all vaps associated to this network
+    """ delete this network: disconfigures all vaps associated to this network
+        @param net the network to be deleted
     """
     global __list_of_networks
     if isinstance(net, Network):
@@ -80,7 +81,7 @@ def del_network(net):
 
 
 def get_or_create_network_by_ssid(ssid):
-    """ returns a Network object representing the ssid.
+    """ @return a Network object representing the ssid.
                 if none exists, a new one is created
     """
     global __list_of_networks
