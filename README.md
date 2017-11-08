@@ -21,10 +21,6 @@ Read [ethanol/README.MD](https://github.com/h3dema/ethanol_controller/blob/maste
 
 Inside **template** directory, you find a sample file, showing how to create a simple module in python that uses Ethanol's resources.
 
-# More info #
-
-See more information in [ethanol/ssl_message/README.MD.](https://github.com/h3dema/ethanol_controller/blob/master/ethanol/ssl_message/README.MD)
-
 
 # Connection #
 
@@ -40,3 +36,7 @@ A Hello message is periodically sent to the controller. The first connection ser
 
 We can see that on the first connection of the AP to the controller, the controller requests additional information represented by the MSG_GET_RADIO_WLANS and MSG_GET_AP_SSID messages shown on the lines below Connection ...
 This information is important for popular class architecture objects. This creates an *ap*. This *ap* has *radio*s and *vap*s. *radio*s represent the physical radio devices on the device, while *vap*s are the configured SSIDs.
+
+# More info #
+
+See more information in [ethanol/ssl_message/README.MD.](https://github.com/h3dema/ethanol_controller/blob/master/ethanol/ssl_message/README.MD)
