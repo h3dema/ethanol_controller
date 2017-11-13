@@ -37,6 +37,8 @@ from pox.ethanol.ssl_message.msg_mean_sta_stats import \
     send_msg_mean_sta_statistics_interface_add
 from pox.ethanol.ssl_message.msg_mean_sta_stats import \
     send_msg_mean_sta_statistics_alpha, send_msg_mean_sta_statistics_time
+from pox.ethanol.ssl_message.msg_hostapd_conf import \
+    get_hostapd_conf, set_hostapd_conf
 
 
 __list_of_aps = {}
@@ -395,3 +397,16 @@ class AP(object):
         self.__stats_alpha = alpha
         server = self.__get_connection()
         send_msg_mean_sta_statistics_alpha(server, id=self.msg_id, alpha=alpha)
+
+    def read_hostapd_conf_param(self, param):
+        """ reads the hostapd.conf, finds the param requested, and returns its value
+        """
+        server = self.__get_connection()
+        msg, value = get_hostapd_conf(server, id=self.msg_id, intf_name=None, conf_param=param)
+        return value
+
+    def write_hostapd_conf_param(self, param, value):
+        """ reads the hostapd.conf, finds the param requested, and (over)write value to its contents
+        """
+        server = self.__get_connection()
+        set_hostapd_conf(server, id=self.msg_id, intf_name=None, conf_param=param, conf_value=value)
