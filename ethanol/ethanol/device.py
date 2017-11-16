@@ -305,9 +305,9 @@ class Device(object):
                 mac = sta_mac
             else:
                 mac = self.__mac_address
-            msg, value = get_tx_bitrate(server, id=self.msg_id,
-                                        intf_name=self.__intf_name,
-                                        sta_mac=mac)
+                msg, value = get_tx_bitrate(server, id=self.msg_id,
+                                            intf_name=self.__intf_name,
+                                            sta_mac=mac)
             return value
 
     @property
