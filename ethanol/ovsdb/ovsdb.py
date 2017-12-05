@@ -163,8 +163,6 @@ if __name__ == '__main__':
         print "Cannot connect to database"
         sys.exit(0)
 
-    current_id = 0
-
     db_list = ovs.list_dbs()
     db_name = db_list['result'][0]
     
