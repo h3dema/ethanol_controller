@@ -73,7 +73,7 @@ def send_msg(server, msg):
         @param server: tuple (ip, port) used to socket connect to the client
         @param msg: message to be sent (ping or pong)
     """
-    ssl_sock = connect_ssl_socket(server)
+    ssl_sock, sckt = connect_ssl_socket(server)
 
     t0 = datetime.now()
     num_bytes = ssl_sock.write(msg)
@@ -82,6 +82,7 @@ def send_msg(server, msg):
     received_msg = ssl_sock.read(BUFFER_SIZE)
     t1 = datetime.now()
     ssl_sock.close()
+    sckt.close()
     if is_error_msg(received_msg):
         return None
     else:

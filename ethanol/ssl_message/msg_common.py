@@ -241,7 +241,7 @@ def connect_ssl_socket(server):
     except:
         return -1
     # print 'Socket -->: conexao estabelecida '
-    return ssl_sock
+    return ssl_sock, sckt
 
 
 """ exemplo de uma mensagem MSG_TYPE.MSG_GET_AP_SSID
@@ -289,7 +289,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         msg : a Container with the message
     """
     msg = builder(msg_struct)
-    ssl_sock = connect_ssl_socket(server)
+    ssl_sock, sckt = connect_ssl_socket(server)
     if ssl_sock == -1:
         # error
         return True, None
@@ -297,6 +297,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
     num_bytes = ssl_sock.write(msg)
     if only_send:
         ssl_sock.close()
+        sckt.close()
         # in this case, just return
         # no return parameters
         return
@@ -305,6 +306,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
 
     # print hexadecimal(received_msg)  # AQUI <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REMOVER
     ssl_sock.close()
+    sckt.close()
     if received_msg != '':
         if is_error_msg(received_msg):
             msg = get_error_msg(received_msg)
