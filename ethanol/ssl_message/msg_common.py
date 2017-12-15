@@ -232,13 +232,21 @@ def connect_ssl_socket(server):
     """ creates a ssl socket to server
         @param server: is a tuple (ip, port)
     """
+    try:
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
+        context.set_ciphers("AES256-SHA")
+    except AttributeError:
+        import sys
+        raise Exception('SSLContext needs Python 2.7.9 - version detected %s' % sys.version)
+        return None, None
     # print 'Socket -->: Requerendo um socket '
     sckt = socket(AF_INET, SOCK_STREAM)
     ssl_sock = ssl.wrap_socket(sckt)  # , cert_reqs=ssl.CERT_REQUIRED)
     # print 'Socket -->: conectando '
     try:
-        conn = ssl_sock.connect(server)
-    except:
+        # conn = ssl_sock.connect(server)
+        ssl_sock.connect(server)
+    except socket.error:
         return -1
     # print 'Socket -->: conexao estabelecida '
     return ssl_sock, sckt
