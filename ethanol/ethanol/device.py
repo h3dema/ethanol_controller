@@ -27,7 +27,8 @@ import uuid
 
 from pox.ethanol.ssl_message.msg_log import log
 from pox.ethanol.ssl_message.msg_sent_received import \
-    send_msg_get_bytesreceived, send_msg_get_bytessent
+    send_msg_get_bytesreceived, send_msg_get_bytessent, \
+    send_msg_get_byteslost
 from pox.ethanol.ssl_message.msg_sent_received import \
     send_msg_get_packetsreceived, send_msg_get_packetssent,\
     send_msg_get_packetslost
@@ -41,6 +42,11 @@ from pox.ethanol.ssl_message.msg_ap_in_range import get_ap_in_range
 from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrate
 from pox.ethanol.ssl_message.msg_uptime import get_uptime
 from pox.ethanol.ssl_message.msg_tos import tos_cleanall, tos_add, tos_replace
+from pox.ethanol.ssl_message.msg_metric import set_metric
+
+"""define a type of metric"""
+METRIC_TO_SUBSCRIBE = ['bytesReceived', 'bytesSent', 'bytesLost', 'packetsReceived', 'packetsSent', 'packetsLost',
+                       'retries', 'failed', 'jitter', 'delay', 'tx_bitrate', 'SNR']
 
 
 class Device(object):
@@ -168,6 +174,16 @@ class Device(object):
             return -1
         server = self.get_connection
         msg, value = send_msg_get_bytessent(server, id=self.msg_id,
+                                            intf_name=self.__intf_name)
+        return value
+
+    @property
+    def bytesLost(self):
+        """ number of bytes lost on this interface (cumulative value) """
+        if self.__intf_name is None:
+            return -1
+        server = self.get_connection
+        msg, value = send_msg_get_byteslost(server, id=self.msg_id,
                                             intf_name=self.__intf_name)
         return value
 
@@ -389,3 +405,22 @@ class Device(object):
                         dip=rule['dip'],
                         dport=rule['dport'],
                         wmm_class=rule['wmm_class'])
+
+    def subscribe_metric(self, metrics, period=100, activate=True):
+        """check if all metrics are valid ones"""
+        processed_all = True
+        metric_value = 0
+        for m in metrics:
+            if m not in METRIC_TO_SUBSCRIBE:
+                processed_all = False
+            else:
+                metric_value += 2 ** METRIC_TO_SUBSCRIBE.index(m)
+        """ call agent to program the metric """
+        """ register/unregister in the server """
+        server = self.get_connection
+        set_metric(server, id=self.msg_id, metric=metric_value, enable=activate, period=period)
+        return processed_all
+
+    def evMetric(self, metric, value):
+        """ this method should be overwritten to deal with received metrics"""
+        pass
