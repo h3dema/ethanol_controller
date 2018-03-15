@@ -326,6 +326,41 @@ class Device(object):
                                             sta_mac=mac)
             return value
 
+    def set_tx_bitrate(self, bitrates):
+        """ set the bitrates allowed
+            @param: bitrates list of integers -- setting the desired bitrates
+            TODO: create msg in msg_bitrates.py to send the desired bitrates
+        """
+        # 1) check type of interface: 2.4 or 5
+        #    set band to legacy_2_4 or legacy_5
+        band_type = 1  # legacy_2_4
+        # 2) call
+        # set_tx_bitrate(server=self.get_connection,
+        #                id=self.msg_id,
+        #                intf_name=self.__intf_name,
+        #                sta_ip=None, sta_port=0,
+        #                band_type=band_type,
+        #                bitrates=bitrates)
+        pass
+
+    def set_mcs_index(self, mcss, ht):
+        """ set the MCS index allowed
+            @param: mcss list of integers -- setting the desired MCS indexes
+            @param: ht bool -- if True set ht_mcs_2_4 or ht_mcs_5 depending on the interface band type
+                               else set vht_mcs_2_4 or vht_mcs_5
+            TODO: create msg in msg_bitrates.py to send the desired bitrates
+        """
+        # 1) check type of interface: 2.4 or 5. define index type based on band and ht (boolean)
+        index_type = 1  # ht_mcs_2_4 ht_mcs_5 vht_mcs_2_4 vht_mcs_5
+        # 2) call
+        # set_mcs_indexes(server=self.get_connection,
+        #                id=self.msg_id,
+        #                intf_name=self.__intf_name,
+        #                sta_ip=None, sta_port=0,
+        #                index=band_type,
+        #                index_values=mcss)
+        pass
+
     @property
     def uptime(self):
         """system uptime and idle time in seconds"""

@@ -161,3 +161,70 @@ def get_tx_bitrate(server, id=0, intf_name=None, sta_ip=None, sta_port=0, sta_ma
       returns the value, -1 equals an error has occured
     """
     return msg, value
+
+
+msg_set_tx_bitrate = Struct('msg_set_tx_bitrate',
+                            Embed(msg_default),  # default fields
+                            Embed(field_intf_name),
+                            Embed(field_station),
+                            Embed(iw_bands),
+                            # Probe()
+                            )
+
+
+def set_tx_bitrate(server, id=0, intf_name=None, sta_ip=None, sta_port=0, band_type=None, bitrates=None):
+    """ runs in the device the command sudo iw dev wlan0 set bitrates legacy_<band> <bitrates>*
+    """
+    if intf_name is None:
+        raise ValueError("intf_name must have a valid value! Received %s" % intf_name)
+    if band_type is None or bitrates is None:
+        raise ValueError("configure (band,bitrates) values")
+    if band_type not in [1, 2]:
+        raise ValueError("Band should be 1 or 2!")
+    # 1) create message
+    msg_struct = Container(
+        m_type=MSG_TYPE.MSG_SET_TX_BITRATES,
+        m_id=id,
+        p_version_length=len(VERSION),
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=len_of_string(intf_name),
+        intf_name=intf_name,
+        sta_ip_size=len_of_string(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        band=band_type - 1,  # legacy_2.4 = 0, legacy_5 = 1
+        num_bitrates=len(bitrates),
+        iw_bitrates=bitrates,
+    )
+    send_and_receive_msg(server, msg_struct, msg_set_tx_bitrate.build, msg_set_tx_bitrate.parse, only_send=True)
+
+
+def set_mcs_indexes(server, id=0, intf_name=None, sta_ip=None, sta_port=0, index=None, index_values=None):
+    """ runs in the device the command sudo iw dev wlan0 set bitrates <mcs index type> <index_values>*
+    """
+    if intf_name is None:
+        raise ValueError("intf_name must have a valid value! Received %s" % intf_name)
+    if index is None or index_values is None:
+        raise ValueError("configure (index,index_values) values")
+    if index not in [1, 2, 3, 4]:
+        raise ValueError("Band should be between 1 and 4!")
+    # 1) create message
+    msg_struct = Container(
+        m_type=MSG_TYPE.MSG_SET_TX_BITRATES,
+        m_id=id,
+        p_version_length=len(VERSION),
+        p_version=VERSION,
+        m_size=0,
+        intf_name_size=len_of_string(intf_name),
+        intf_name=intf_name,
+        sta_ip_size=len_of_string(sta_ip),
+        sta_ip=sta_ip,
+        sta_port=sta_port,
+        band=index + 1,  # ht_mcs_2_4=2 ht_mcs_5=3 vht_mcs_2_4=4 vht_mcs_5=5
+        num_bitrates=len(index_values),
+        iw_bitrates=index_values,
+    )
+    send_and_receive_msg(server, msg_struct, msg_set_tx_bitrate.build, msg_set_tx_bitrate.parse, only_send=True)
+
+
