@@ -49,7 +49,7 @@ class VAP(Device):
         self.__mac_address = mac_address  #: virtual ap's mac address
         self.__radio = radio  #: physical radio to which the vap is attached
 
-        log.debug("Registering_functions", self.__mac_address)
+        log.debug("Registering_functions: %s", self.__mac_address)
         # register the association process for this ap
         register_functions(self.__mac_address, self)
 
