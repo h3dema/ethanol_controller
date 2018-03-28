@@ -13,7 +13,7 @@
 @requires: construct 2.5.2
 """
 import ssl
-from socket import socket, AF_INET, SOCK_STREAM
+import socket
 
 from pox.ethanol.ssl_message.enum import Enum
 from pox.ethanol.ssl_message.msg_core import msg_default
@@ -23,7 +23,7 @@ from pox.ethanol.ssl_message.msg_core import msg_default
 # message version
 #
 # #####################################
-VERSION = "1.0.3"  #: ethanol version
+VERSION = "1.0.4"  #: ethanol version 20/march/2018
 
 # #####################################
 #
@@ -244,7 +244,6 @@ def connect_ssl_socket(server):
         sudo apt-get -y upgrade
         sudo apt-get install python2.7
 
-    """
     try:
         context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
         context.set_ciphers("AES256-SHA")
@@ -252,8 +251,11 @@ def connect_ssl_socket(server):
         import sys
         raise Exception('SSLContext needs Python 2.7.9 - version detected %s' % sys.version)
         return None, None
+    """
     # print 'Socket -->: Requerendo um socket '
-    sckt = socket(AF_INET, SOCK_STREAM)
+    sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # print "Local socket name", sckt.getsockname()
+    # print "Connecting to ", server
     ssl_sock = ssl.wrap_socket(sckt)  # , cert_reqs=ssl.CERT_REQUIRED)
     # print 'Socket -->: conectando '
     try:

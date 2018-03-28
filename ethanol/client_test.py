@@ -18,15 +18,14 @@
 
 
 '''
-from threading import Thread
-
-from pox.core import core
-
+# from threading import Thread
+# from pox.core import core
 from pox.ethanol.ssl_message.msg_log import log
 
 
 def msg_acs(connect, intf_name='wlan0', num_acs_tests=1):
     """this is a test function. it runs num_acs_tests times on interface wlan0"""
+    from pox.ethanol.ssl_message.msg_acs import get_acs
     msg, num_chan, acs = get_acs(server=connect, id=0, intf_name=intf_name, num_tests=num_acs_tests)
 
     print 'num_channnels = ', num_chan
@@ -59,7 +58,8 @@ def launch(server_address='0.0.0.0', server_port='22223',
       registra a classe que trata as conexões dos Aps
       (server_address, server_port) tuple with the AP's ip address and TCP port
     """
-    log.info("Running message(s)")
+    from pox.ethanol.ssl_message.msg_common import VERSION
+    log.info("Running message(s) - Ethanol version %s", VERSION)
 
     '''
       send a message
@@ -67,20 +67,26 @@ def launch(server_address='0.0.0.0', server_port='22223',
 
     if True:
         server = (server_address, server_port)
+        print "Sending messages to ", server
         # MSG_HELLO
-        # from pox.ethanol.ssl_message.msg_hello import send_msg_hello
-        # print "sending msg_hello"
-        # print send_msg_hello(server=server)
+        from pox.ethanol.ssl_message.msg_hello import send_msg_hello
+        print "sending msg_hello"
+        print send_msg_hello(server=server)
 
-        # MSG_HELLO
+        # PING
         # from pox.ethanol.ssl_message.msg_ping import send_msg_ping
         # from random import randint
         # num_tries=randint(1,10)+1
         # print "sending msg_ping - num_tries=",num_tries
         # print send_msg_ping(server=server, num_tries=num_tries)
 
+        # MSG_GET_RADIO_WLANS
+        from pox.ethanol.ssl_message.msg_radio_wlans import get_radio_wlans
+        msg, wlans = get_radio_wlans(server=server, intf_name = intf_name)
+        print wlans
+
+
         # MSG_GET_ACS
-        # from pox.ethanol.ssl_message.msg_acs import get_acs
         # msg_acs(connect=server, intf_name = intf_name, num_acs_tests = num_acs_tests)
 
         # MSG_GET_TXPOWER
@@ -127,11 +133,6 @@ def launch(server_address='0.0.0.0', server_port='22223',
         # msg, num_aps, aps = get_ap_in_range(server=server, intf_name = intf_name)
         # print aps
 
-        # MSG_GET_RADIO_WLANS
-        # from pox.ethanol.ssl_message.msg_radio_wlans import get_radio_wlans
-        # msg, wlans = get_radio_wlans(server=server, intf_name = intf_name)
-        # print wlans
-
         # MSG_GET_STATISTICS
         # from pox.ethanol.ssl_message.msg_statistics import send_msg_get_statistics
         # msg, stats = send_msg_get_statistics(server=server, intf_name = intf_name)
@@ -140,15 +141,17 @@ def launch(server_address='0.0.0.0', server_port='22223',
         # MSG_GET_STA_STATISTICS
 
         # MSG_GET_CURRENTCHANNEL
-        from pox.ethanol.ssl_message.msg_channels import get_currentchannel, set_currentchannel
-        msg, value = get_currentchannel(server=server, intf_name=intf_name)
-        print "current chan = ", value
-        value = (value + 1) % 11 + 1
+        # from pox.ethanol.ssl_message.msg_channels import get_currentchannel
+        # msg, value = get_currentchannel(server=server, intf_name=intf_name)
+        # print "current chan = ", value
+        # value = (value + 1) % 11 + 1
+
         # #MSG_SET_CURRENTCHANNEL
-        print "setting new channel to ", value
-        set_currentchannel(server=server, intf_name=intf_name, channel=value)
-        msg, value = get_currentchannel(server=server, intf_name=intf_name)
-        print "current chan = ", value
+        # from pox.ethanol.ssl_message.msg_channels import set_currentchannel
+        # print "setting new channel to ", value
+        # set_currentchannel(server=server, intf_name=intf_name, channel=value)
+        # msg, value = get_currentchannel(server=server, intf_name=intf_name)
+        # print "current chan = ", value
 
         # MSG_GET_TX_BITRATE
         # from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrate
