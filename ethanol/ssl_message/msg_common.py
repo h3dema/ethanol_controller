@@ -234,6 +234,18 @@ def hexadecimal(s):
 def connect_ssl_socket(server):
     """ creates a ssl socket to server
         @param server: is a tuple (ip, port)
+
+        if you are using Ubuntu 14.04 LTS, maybe it cannot update to 2.7.9 by its own
+        you will need to insert a PPA repository
+        type the following commands:
+
+        sudo add-apt-repository ppa:jonathonf/python-2.7
+        sudo apt-get -y update
+        sudo apt-get -y upgrade
+
+        if python is not installed you need also to call:
+        sudo apt-get install python2.7
+
     """
     try:
         context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
