@@ -87,7 +87,6 @@ def get_radio_wlans(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
         num_wlans=0,
         list_of_radio_wlans=[],
     )
-
     error, msg = send_and_receive_msg(server, msg_struct, msg_radio_wlans.build, msg_radio_wlans.parse)
     if not error:
         value = msg['list_of_radio_wlans'] if 'list_of_radio_wlans' in msg else None
