@@ -129,7 +129,7 @@ class Radio(object):
         server = self.__get_connection()  # allows to send message to the AP
         set_currentchannel(server, id=self.msg_id, channel=new_channel,
                            intf_name=self.__wiphy_name)
-        log.debug("canal: %d interface: %s tcp: %d:%d", new_channel,
+        log.debug("canal: %d interface: %s tcp: %s:%d", new_channel,
                   self.__wiphy_name, server[0], server[1])
 
     @property
