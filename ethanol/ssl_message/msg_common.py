@@ -242,8 +242,6 @@ def connect_ssl_socket(server):
         sudo add-apt-repository ppa:jonathonf/python-2.7
         sudo apt-get -y update
         sudo apt-get -y upgrade
-
-        if python is not installed you need also to call:
         sudo apt-get install python2.7
 
     """
