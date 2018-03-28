@@ -135,6 +135,7 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_GET_FASTBSSTRANSITION_COMPATIBLE',
                 'MSG_GET_BYTESRECEIVED',
                 'MSG_GET_BYTESSENT',
+                'MSG_GET_BYTESLOST',
                 'MSG_GET_PACKETSRECEIVED',
                 'MSG_GET_PACKETSSENT',
                 'MSG_GET_PACKETSLOST',
@@ -174,6 +175,10 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_TOS_REPLACE',
                 'MSG_SET_MTU',
                 'MSG_SET_TXQUEUELEN',
+                'MSG_GET_HOSTAPD_CONF',
+                'MSG_SET_HOSTAPD_CONF',
+                'MSG_SET_METRIC',
+                'MSG_METRIC_RECEIVED',
                 )
 """ contains all constants used as message type"""
 
@@ -230,16 +235,24 @@ def connect_ssl_socket(server):
     """ creates a ssl socket to server
         @param server: is a tuple (ip, port)
     """
+    try:
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
+        context.set_ciphers("AES256-SHA")
+    except AttributeError:
+        import sys
+        raise Exception('SSLContext needs Python 2.7.9 - version detected %s' % sys.version)
+        return None, None
     # print 'Socket -->: Requerendo um socket '
     sckt = socket(AF_INET, SOCK_STREAM)
     ssl_sock = ssl.wrap_socket(sckt)  # , cert_reqs=ssl.CERT_REQUIRED)
     # print 'Socket -->: conectando '
     try:
-        conn = ssl_sock.connect(server)
-    except:
+        # conn = ssl_sock.connect(server)
+        ssl_sock.connect(server)
+    except socket.error:
         return -1
     # print 'Socket -->: conexao estabelecida '
-    return ssl_sock
+    return ssl_sock, sckt
 
 
 """ exemplo de uma mensagem MSG_TYPE.MSG_GET_AP_SSID
@@ -287,7 +300,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         msg : a Container with the message
     """
     msg = builder(msg_struct)
-    ssl_sock = connect_ssl_socket(server)
+    ssl_sock, sckt = connect_ssl_socket(server)
     if ssl_sock == -1:
         # error
         return True, None
@@ -295,6 +308,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
     num_bytes = ssl_sock.write(msg)
     if only_send:
         ssl_sock.close()
+        sckt.close()
         # in this case, just return
         # no return parameters
         return
@@ -303,6 +317,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
 
     # print hexadecimal(received_msg)  # AQUI <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REMOVER
     ssl_sock.close()
+    sckt.close()
     if received_msg != '':
         if is_error_msg(received_msg):
             msg = get_error_msg(received_msg)

@@ -333,3 +333,88 @@ class VAP(Device):
             if 'mac_address' in v:
                 list_macs.append(v['mac_address'])
         return list_macs
+
+    def mlme_qos_map_request(self, mac_station, mappings):
+        """
+        This primitive is used by an AP to transmit an unsolicited QoS Map Configure frame
+        to a specified STA MAC entity.
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import qos_map_request
+        qos_map_request(server, id=self.msg_id,
+                        intf_name=self.__intf_name,
+                        bssid=self.__mac_address,
+                        mac_station=mac_station,
+                        mappings=mappings)
+
+    def mlme_scan_request(self, mac_station, configs):
+        """
+        Requests a survey of potential BSSs that the STA can later elect to try to join.
+        blocking: waits for response or timeout
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import scan_request
+        msg, stats = scan_request(server, id=self.msg_id,
+                                  intf_name=self.__intf_name,
+                                  bssid=self.__mac_address,
+                                  mac_station=mac_station,
+                                  configs=configs)
+        return stats
+
+    def mlme_channel_switch(self, mac_station, configs):
+        """
+        requests a switch to a new operating channel.
+        blocking: waits for response or timeout
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import channel_switch
+        msg, stats = channel_switch(server, id=self.msg_id,
+                                    intf_name=self.__intf_name,
+                                    bssid=self.__mac_address,
+                                    mac_station=mac_station,
+                                    configs=configs)
+        return stats
+
+    def mlme_neighbor_report(self, mac_station):
+        """
+        requests a Neighbor Report.
+        blocking: waits for response or timeout
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import neighbor_report
+        msg, stats = neighbor_report(server, id=self.msg_id,
+                                     intf_name=self.__intf_name,
+                                     bssid=self.__mac_address,
+                                     mac_station=mac_station
+                                     )
+        return stats
+
+    def mlme_link_measurement(self, mac_station, configs):
+        """
+        measurement of link path loss and the estimation of link margin between peer entities.
+        blocking: waits for response or timeout
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import link_measurement
+        msg, stats = link_measurement(server, id=self.msg_id,
+                                      intf_name=self.__intf_name,
+                                      bssid=self.__mac_address,
+                                      mac_station=mac_station,
+                                      configs=configs
+                                      )
+        return stats
+
+    def mlme_bss_transition(self, mac_station, new_ap):
+        """
+        measurement of link path loss and the estimation of link margin between peer entities.
+        non-blocking
+        """
+        server = self.__get_connection()
+        from pox.ethanol.ssl_message.msg_mlme import bss_transition
+        bss_transition(server, id=self.msg_id,
+                       intf_name=self.__intf_name,
+                       bssid=self.__mac_address,
+                       mac_station=mac_station,
+                       new_ap=new_ap,
+                       )
+

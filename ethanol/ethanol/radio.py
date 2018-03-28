@@ -40,6 +40,12 @@ from pox.ethanol.ssl_message.msg_powersave import \
 from pox.ethanol.ssl_message.msg_log import log
 from pox.ethanol.ssl_message.msg_beacon_interval import get_beacon_interval, set_beacon_interval
 
+
+# import re
+# def is_hex(s):
+#     return re.fullmatch(r"^[0-9a-fA-F]$", s or "") is not None
+
+
 class Radio(object):
     """
     Radio represents the physical radios attached to an AP
@@ -308,8 +314,10 @@ class Radio(object):
         """
         pass
 
-    def send_frame(self, frame):
+    def send_frame(self, packet):
         """ calls the AP so it sends the frame
-            @param frame: fully formatted (binary) frame to be sent by the AP
+            @param packet: fully formatted (binary) packet to be sent by the AP
         """
+        if len(packet) == 0:
+            return
         pass

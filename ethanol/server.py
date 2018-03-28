@@ -18,7 +18,7 @@ from pox.ethanol.ssl_message.msg_common import SERVER_ADDR, SERVER_PORT
 from pox.ethanol.ethanol.ap import add_ap_openflow
 
 from pox.core import core
-import pox.openflow.libopenflow_01 as of
+#import pox.openflow.libopenflow_01 as of
 
 
 def run_server(server_address='0.0.0.0', server_port=SERVER_PORT):

@@ -51,6 +51,7 @@ msg_sent_received = Struct('msg_sent_received',
 supported_messages = [
     MSG_TYPE.MSG_GET_BYTESRECEIVED,
     MSG_TYPE.MSG_GET_BYTESSENT,
+    MSG_TYPE.MSG_GET_BYTESLOST,
     MSG_TYPE.MSG_GET_PACKETSRECEIVED,
     MSG_TYPE.MSG_GET_PACKETSSENT,
     MSG_TYPE.MSG_GET_PACKETSLOST,
@@ -134,6 +135,24 @@ def send_msg_get_bytessent(server, id=0, intf_name=None, sta_ip=None, sta_port=0
     """
     return send_msg_sent_received(server=server, id=id,
                                   type=MSG_TYPE.MSG_GET_BYTESSENT,
+                                  intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
+
+
+def send_msg_get_byteslost(server, id=0, intf_name=None, sta_ip=None, sta_port=0):
+    """ requests number of bytes sent by the interface. this number is always incremented since the interface activation
+      @param server: tuple (ip, port_num)
+      @param id: message id
+      @param intf_name: name of the wireless interface
+      @type intf_name: str
+      @param sta_ip: ip address of the station that this message should be relayed to, if sta_ip is different from None
+      @type sta_ip: str
+      @param sta_port: socket port number of the station
+      @type sta_port: int
+
+      @return: msg - received message
+    """
+    return send_msg_sent_received(server=server, id=id,
+                                  type=MSG_TYPE.MSG_GET_BYTESLOST,
                                   intf_name=intf_name, sta_ip=sta_ip, sta_port=sta_port)
 
 

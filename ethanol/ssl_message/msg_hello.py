@@ -54,7 +54,7 @@ def send_msg_hello(server, m_id=0):
 
       @return: msg - received message
     """
-    ssl_sock = connect_ssl_socket(server)
+    ssl_sock, sckt = connect_ssl_socket(server)
 
     # print "send_msg_hello id:", m_id
     # 1) create message
@@ -90,6 +90,7 @@ def send_msg_hello(server, m_id=0):
     else:
         msg = None
     ssl_sock.close()
+    sckt.close()
     return msg
 
 

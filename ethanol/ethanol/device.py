@@ -27,7 +27,8 @@ import uuid
 
 from pox.ethanol.ssl_message.msg_log import log
 from pox.ethanol.ssl_message.msg_sent_received import \
-    send_msg_get_bytesreceived, send_msg_get_bytessent
+    send_msg_get_bytesreceived, send_msg_get_bytessent, \
+    send_msg_get_byteslost
 from pox.ethanol.ssl_message.msg_sent_received import \
     send_msg_get_packetsreceived, send_msg_get_packetssent,\
     send_msg_get_packetslost
@@ -41,6 +42,11 @@ from pox.ethanol.ssl_message.msg_ap_in_range import get_ap_in_range
 from pox.ethanol.ssl_message.msg_bitrates import get_tx_bitrate
 from pox.ethanol.ssl_message.msg_uptime import get_uptime
 from pox.ethanol.ssl_message.msg_tos import tos_cleanall, tos_add, tos_replace
+from pox.ethanol.ssl_message.msg_metric import set_metric
+
+"""define a type of metric"""
+METRIC_TO_SUBSCRIBE = ['bytesReceived', 'bytesSent', 'bytesLost', 'packetsReceived', 'packetsSent', 'packetsLost',
+                       'retries', 'failed', 'jitter', 'delay', 'tx_bitrate', 'SNR']
 
 
 class Device(object):
@@ -168,6 +174,16 @@ class Device(object):
             return -1
         server = self.get_connection
         msg, value = send_msg_get_bytessent(server, id=self.msg_id,
+                                            intf_name=self.__intf_name)
+        return value
+
+    @property
+    def bytesLost(self):
+        """ number of bytes lost on this interface (cumulative value) """
+        if self.__intf_name is None:
+            return -1
+        server = self.get_connection
+        msg, value = send_msg_get_byteslost(server, id=self.msg_id,
                                             intf_name=self.__intf_name)
         return value
 
@@ -305,10 +321,45 @@ class Device(object):
                 mac = sta_mac
             else:
                 mac = self.__mac_address
-            msg, value = get_tx_bitrate(server, id=self.msg_id,
-                                        intf_name=self.__intf_name,
-                                        sta_mac=mac)
+                msg, value = get_tx_bitrate(server, id=self.msg_id,
+                                            intf_name=self.__intf_name,
+                                            sta_mac=mac)
             return value
+
+    def set_tx_bitrate(self, bitrates):
+        """ set the bitrates allowed
+            @param: bitrates list of integers -- setting the desired bitrates
+            TODO: create msg in msg_bitrates.py to send the desired bitrates
+        """
+        # 1) check type of interface: 2.4 or 5
+        #    set band to legacy_2_4 or legacy_5
+        band_type = 1  # legacy_2_4
+        # 2) call
+        # set_tx_bitrate(server=self.get_connection,
+        #                id=self.msg_id,
+        #                intf_name=self.__intf_name,
+        #                sta_ip=None, sta_port=0,
+        #                band_type=band_type,
+        #                bitrates=bitrates)
+        pass
+
+    def set_mcs_index(self, mcss, ht):
+        """ set the MCS index allowed
+            @param: mcss list of integers -- setting the desired MCS indexes
+            @param: ht bool -- if True set ht_mcs_2_4 or ht_mcs_5 depending on the interface band type
+                               else set vht_mcs_2_4 or vht_mcs_5
+            TODO: create msg in msg_bitrates.py to send the desired bitrates
+        """
+        # 1) check type of interface: 2.4 or 5. define index type based on band and ht (boolean)
+        index_type = 1  # ht_mcs_2_4 ht_mcs_5 vht_mcs_2_4 vht_mcs_5
+        # 2) call
+        # set_mcs_indexes(server=self.get_connection,
+        #                id=self.msg_id,
+        #                intf_name=self.__intf_name,
+        #                sta_ip=None, sta_port=0,
+        #                index=band_type,
+        #                index_values=mcss)
+        pass
 
     @property
     def uptime(self):
@@ -389,3 +440,22 @@ class Device(object):
                         dip=rule['dip'],
                         dport=rule['dport'],
                         wmm_class=rule['wmm_class'])
+
+    def subscribe_metric(self, metrics, period=100, activate=True):
+        """check if all metrics are valid ones"""
+        processed_all = True
+        metric_value = 0
+        for m in metrics:
+            if m not in METRIC_TO_SUBSCRIBE:
+                processed_all = False
+            else:
+                metric_value += 2 ** METRIC_TO_SUBSCRIBE.index(m)
+        """ call agent to program the metric """
+        """ register/unregister in the server """
+        server = self.get_connection
+        set_metric(server, id=self.msg_id, metric=metric_value, enable=activate, period=period)
+        return processed_all
+
+    def evMetric(self, metric, value):
+        """ this method should be overwritten to deal with received metrics"""
+        pass

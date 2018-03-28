@@ -30,6 +30,7 @@ from pox.ethanol.ssl_message.msg_error import return_error_msg_struct
 from pox.ethanol.ssl_message.msg_core import decode_default_fields
 from pox.ethanol.ssl_message.msg_error import process_msg_not_implemented
 from pox.ethanol.ssl_message.msg_association import process_association
+from pox.ethanol.ssl_message.msg_metric import process_metric
 
 """ maps the message type (received in the client's message) to the function that will process it
     there aren't many, because the controller is supposed to be the active part (it requests info or sets values)
@@ -84,6 +85,8 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
                         MSG_TYPE.MSG_MEAN_STA_STATISTICS_REMOVE_INTERFACE: process_msg_not_implemented,
                         MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_ALPHA: process_msg_not_implemented,
                         MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_TIME: process_msg_not_implemented,
+                        MSG_TYPE.MSG_SET_METRIC: process_msg_not_implemented,
+                        MSG_TYPE.MSG_METRIC_RECEIVED: process_metric,
                         }
 """all message types supported"""
 
@@ -111,7 +114,8 @@ def deal_with_client(connstream, fromaddr):
 
     # reply to client, if necessary
     if reply is not None:
-        num_bytes = connstream.write(reply)
+        # num_bytes = connstream.write(reply)
+        connstream.write(reply)
         # log.debug(num_bytes)
 
     # finished with client
