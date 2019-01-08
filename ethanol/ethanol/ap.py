@@ -211,7 +211,7 @@ class AP(object):
 
         msg, list_ssids = get_ap_ssids(server)
 
-        if len(list_ssids) > 0:
+        if list_ssids is not None and len(list_ssids) > 0:
             # TODO: tratar quando o ssid vem nulo
             log.info("SSIDs in Radio: %s" % ",".join([_ssid['ssid']
                                                       for _ssid in
@@ -238,7 +238,9 @@ class AP(object):
                                                                 self.__radios[intf_name],
                                                                 intf_x_mac[intf_name])
             log.info("Num# of VAPs: %d" % len(self.__listVAP))
-
+        else:
+          log.debug("AP returned no SSIDs")
+            
         log.info('New AP created - id: %s', self.id)
 
     @property
