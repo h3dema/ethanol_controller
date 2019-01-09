@@ -214,10 +214,9 @@ class AP(object):
         if list_ssids is not None and len(list_ssids) > 0:
             # TODO: tratar quando o ssid vem nulo
             log.info("SSIDs in Radio: %s" % ",".join([_ssid['ssid']
-                                                      for _ssid in
-                                                      list_ssids]))
+                                                      for _ssid in list_ssids if _ssid is not None]))
             for ssid in list_ssids:
-                if ssid.ssid is None:
+                if ssid is None or ssid.ssid is None:
                     log.info("Detected a invalid SSID!!!")
                 else:
                     net = Network(ssid.ssid)
