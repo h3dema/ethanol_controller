@@ -197,7 +197,7 @@ class AP(object):
         intf_x_mac = {}
 
         log.info('wireless interfaces: [%s]' % "".join([_w['intf_name']
-                                                        for _w in wlans]))
+                                                        for _w in wlans if wlan is not None and wlan._w is not None]))
         if wlans is not None:
             # identify distinct set of phy interfaces
             for wlan in wlans:
@@ -214,7 +214,7 @@ class AP(object):
         if list_ssids is not None and len(list_ssids) > 0:
             # TODO: tratar quando o ssid vem nulo
             log.info("SSIDs in Radio: %s" % ",".join([_ssid['ssid']
-                                                      for _ssid in list_ssids if _ssid is not None]))
+                                                      for _ssid in list_ssids if _ssid is not None and _ssid.ssid is not None]))
             for ssid in list_ssids:
                 if ssid is None or ssid.ssid is None:
                     log.info("Detected a invalid SSID!!!")
