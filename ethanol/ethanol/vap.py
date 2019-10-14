@@ -419,7 +419,8 @@ class VAP(Device):
                        )
 
     def get_queue_params(self):
-        """ get the wifi Queue parameters (used by the AP)
+        """ get the wifi Queue parameters. They are __used by the access point__ when transmitting frames to the clients.
+
             TODO: create message
         """
         server = self.__get_connection()
@@ -427,16 +428,20 @@ class VAP(Device):
     def set_queue_params(self, num_queue, aifs, cw_min, cw_max, burst_time):
         """ set the parameters of one of the wifi Queues (used by the AP)
             @param num_queue: number of the queue (1 to 4)
-            @param aifs:
-            @param cw_min
-            @param cw_max
-            @param burst_time
+            @param aifs: AIFS (default 2)
+            @param cw_min: minimum cw (1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767)
+            @param cw_max: same values as cwMin, cwMax >= cwMin
+            @param burst_time: maximum length (in milliseconds with precision of up to 0.1 ms) for bursting
+
             TODO: create message
         """
         server = self.__get_connection()
 
     def get_wmm_params(self):
-        """ get the wifi Queue parameters (used by the station)
+        """ get the wifi Queue parameters (used by the station). These values are sent to WMM clients when they associate.
+            The parameters will be used by WMM clients for frames transmitted to the AP.
+            @return: a list with the parameters (4 queues)
+
             TODO: create message
         """
         server = self.__get_connection()
@@ -444,10 +449,12 @@ class VAP(Device):
     def set_wmm_params(self, num_queue, aifs, cw_min, cw_max, txop):
         """ set the parameters of one of the wifi Queues (used by the station - sent by the AP)
             @param num_queue: number of the queue (1 to 4)
-            @param aifs:
-            @param cw_min
-            @param cw_max
-            @param txop
+            @param aifs: AIFS (default 2)
+            @param cw_min: minimum cw (0, .., 15).
+                           The actual cw value used will be (2^n)-1 where n is the value given here.
+            @param cw_max: same values as cwMin, cwMax >= cwMin
+            @param txop: is in units of 32 microseconds
+
             TODO: create message
         """
         server = self.__get_connection()
