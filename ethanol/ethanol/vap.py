@@ -418,3 +418,36 @@ class VAP(Device):
                        new_ap=new_ap,
                        )
 
+    def get_queue_params(self):
+        """ get the wifi Queue parameters (used by the AP)
+            TODO: create message
+        """
+        server = self.__get_connection()
+
+    def set_queue_params(self, num_queue, aifs, cw_min, cw_max, burst_time):
+        """ set the parameters of one of the wifi Queues (used by the AP)
+            @param num_queue: number of the queue (1 to 4)
+            @param aifs:
+            @param cw_min
+            @param cw_max
+            @param burst_time
+            TODO: create message
+        """
+        server = self.__get_connection()
+
+    def get_wmm_params(self):
+        """ get the wifi Queue parameters (used by the station)
+            TODO: create message
+        """
+        server = self.__get_connection()
+
+    def set_wmm_params(self, num_queue, aifs, cw_min, cw_max, txop):
+        """ set the parameters of one of the wifi Queues (used by the station - sent by the AP)
+            @param num_queue: number of the queue (1 to 4)
+            @param aifs:
+            @param cw_min
+            @param cw_max
+            @param txop
+            TODO: create message
+        """
+        server = self.__get_connection()
