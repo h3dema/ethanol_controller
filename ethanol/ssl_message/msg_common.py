@@ -178,7 +178,10 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_GET_HOSTAPD_CONF',
                 'MSG_SET_HOSTAPD_CONF',
                 'MSG_SET_METRIC',
-                'MSG_METRIC_RECEIVED',
+                'MSG_GET_QUEUE_PARAMS',
+                'MSG_SET_QUEUE_PARAMS',
+                'MSG_GET_WMM_PARAMS',
+                'MSG_SET_WMM_PARAMS',
                 )
 """ contains all constants used as message type"""
 
