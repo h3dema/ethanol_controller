@@ -4,4 +4,4 @@ MY_PATH=`pwd`
 git submodule update --remote --init
 
 # create link
-ln -s "$MY_PATH/ethanol" "$MY_PATH/pox/pox/ethanol"
+ln -sf "$MY_PATH/ethanol" "$MY_PATH/pox/pox/ethanol"
