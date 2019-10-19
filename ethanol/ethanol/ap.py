@@ -196,8 +196,8 @@ class AP(object):
         msg, wlans = get_radio_wlans(server)
         intf_x_mac = {}
 
-        log.info('wireless interfaces: [%s]' % "".join([_w['intf_name']
-                                                        for _w in wlans if wlan is not None and wlan._w is not None]))
+        log.info('wireless interfaces: [%s]' % ",".join([_w['intf_name']
+                                                        for _w in wlans if _w is not None and _w.intf_name is not None]))
         if wlans is not None:
             # identify distinct set of phy interfaces
             for wlan in wlans:
