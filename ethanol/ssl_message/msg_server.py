@@ -86,7 +86,7 @@ map_msg_to_procedure = {MSG_TYPE.MSG_ASSOCIATION: process_association,
                         MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_ALPHA: process_msg_not_implemented,
                         MSG_TYPE.MSG_MEAN_STA_STATISTICS_SET_TIME: process_msg_not_implemented,
                         MSG_TYPE.MSG_SET_METRIC: process_msg_not_implemented,
-                        MSG_TYPE.MSG_METRIC_RECEIVED: process_metric,
+                        # MSG_TYPE.MSG_METRIC_RECEIVED: process_metric,  # ** not implemented in the ethanol_hostapd messaging module
                         }
 """all message types supported"""
 
