@@ -22,7 +22,7 @@ import ssl
 import os
 import sys
 
-from pox.ethanol.ssl_message.msg_common import MSG_TYPE, SERVER_ADDR, SERVER_PORT
+from pox.ethanol.ssl_message.msg_common import MSG_TYPE, SERVER_ADDR, SERVER_PORT, BUFFER_SIZE
 from pox.ethanol.ssl_message.msg_hello import process_hello
 from pox.ethanol.ssl_message.msg_bye import process_bye
 from pox.ethanol.ssl_message.msg_ping import process_msg_ping
@@ -98,7 +98,7 @@ def deal_with_client(connstream, fromaddr):
         @param fromaddr:
     """
     # read data from client
-    received_msg = connstream.read(65536)
+    received_msg = connstream.read(BUFFER_SIZE)
     if len(received_msg) > 0:
         # decode message
         msg = decode_default_fields(received_msg)
