@@ -22,7 +22,7 @@ import ssl
 import os
 import sys
 
-from pox.ethanol.ssl_message.msg_common import MSG_TYPE, SERVER_PORT
+from pox.ethanol.ssl_message.msg_common import MSG_TYPE, SERVER_ADDR, SERVER_PORT
 from pox.ethanol.ssl_message.msg_hello import process_hello
 from pox.ethanol.ssl_message.msg_bye import process_bye
 from pox.ethanol.ssl_message.msg_ping import process_msg_ping
@@ -163,5 +163,5 @@ def run(server):
 
 
 if __name__ == "__main__":
-    server = ('localhost', SERVER_PORT)  # SERVER_PORT
+    server = (SERVER_ADDR, SERVER_PORT)  # SERVER_PORT
     run(server)

@@ -191,7 +191,7 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
 #
 # #####################################
 
-SERVER_ADDR = "localhost"
+SERVER_ADDR = "0.0.0.0"
 """ this is the default address our server is going to bind
     for tests, connect only to the loopback interface
     if you want to connect to all available interfaces, use "0.0.0.0"
