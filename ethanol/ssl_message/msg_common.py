@@ -346,7 +346,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
 
 
 def len_of_string(v):
-    return 0 if v is None and not isinstance(v, str) else len(v)
+    return 0 if not isinstance(v, str) else len(v)
 
 
 def return_from_dict(d, v, error):
