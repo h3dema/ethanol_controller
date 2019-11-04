@@ -314,12 +314,12 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         error : true if something goes wrong
         msg : a Container with the message
     """
-    msg = builder(msg_struct)
     ssl_sock, sckt = connect_ssl_socket(server)
     if ssl_sock == -1:
         # error
         return True, None
-
+        
+    msg = builder(msg_struct)
     num_bytes = ssl_sock.write(msg)
     if only_send:
         ssl_sock.close()
