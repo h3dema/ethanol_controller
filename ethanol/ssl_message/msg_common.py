@@ -294,7 +294,7 @@ def is_error_msg(received_msg):
 
 
 def get_error_msg(received_msg):
-    if is_error_msg(received_msg):
+    if not is_error_msg(received_msg):
         return None
     from msg_error import msg_error
     msg = msg_error.parse(received_msg)
