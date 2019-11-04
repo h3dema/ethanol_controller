@@ -311,7 +311,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         this Struct class must be able to interpret Cointainer fields
 
         @return:
-        error : false if something goes wrong
+        error : true if something goes wrong
         msg : a Container with the message
     """
     msg = builder(msg_struct)
