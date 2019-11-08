@@ -191,7 +191,7 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
 #
 # #####################################
 
-SERVER_ADDR = "localhost"
+SERVER_ADDR = "0.0.0.0"
 """ this is the default address our server is going to bind
     for tests, connect only to the loopback interface
     if you want to connect to all available interfaces, use "0.0.0.0"
@@ -294,7 +294,7 @@ def is_error_msg(received_msg):
 
 
 def get_error_msg(received_msg):
-    if is_error_msg(received_msg):
+    if not is_error_msg(received_msg):
         return None
     from msg_error import msg_error
     msg = msg_error.parse(received_msg)
@@ -311,15 +311,15 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         this Struct class must be able to interpret Cointainer fields
 
         @return:
-        error : false if something goes wrong
+        error : true if something goes wrong
         msg : a Container with the message
     """
-    msg = builder(msg_struct)
     ssl_sock, sckt = connect_ssl_socket(server)
     if ssl_sock == -1:
         # error
         return True, None
-
+        
+    msg = builder(msg_struct)
     num_bytes = ssl_sock.write(msg)
     if only_send:
         ssl_sock.close()
@@ -346,7 +346,7 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
 
 
 def len_of_string(v):
-    return 0 if v is None and not isinstance(v, str) else len(v)
+    return 0 if not isinstance(v, str) else len(v)
 
 
 def return_from_dict(d, v, error):

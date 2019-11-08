@@ -15,14 +15,14 @@ from threading import Thread
 from pox.ethanol.ssl_message.msg_log import log
 from pox.ethanol.ssl_message.msg_server import run
 # from pox.ethanol.ssl_message.msg_common import SERVER_ADDR
-from pox.ethanol.ssl_message.msg_common import SERVER_PORT, VERSION
+from pox.ethanol.ssl_message.msg_common import SERVER_PORT, SERVER_ADDR, VERSION
 from pox.ethanol.ethanol.ap import add_ap_openflow
 
 from pox.core import core
 # import pox.openflow.libopenflow_01 as of
 
 
-def run_server(server_address='0.0.0.0', server_port=SERVER_PORT):
+def run_server(server_address=SERVER_ADDR, server_port=SERVER_PORT):
     """ creates an Ethanol server at SERVER_PORT and activates it
     """
     server = (server_address, server_port)  # socket provided by the server
@@ -30,7 +30,6 @@ def run_server(server_address='0.0.0.0', server_port=SERVER_PORT):
     log.info("Ethanol version %s" % VERSION)
     if run(server) == -1:
         log.info("Server error. Not receiving messages!")
-
     log.info("Server finished!")
 
 
