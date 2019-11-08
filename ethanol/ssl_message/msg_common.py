@@ -30,7 +30,6 @@ VERSION = "1.0.4"  #: ethanol version 20/march/2018
 # tipos de mensagens
 #
 # #####################################
-
 MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_BYE_TYPE',
                 # // tipo das mensagens de erro
@@ -183,7 +182,11 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
                 'MSG_GET_WMM_PARAMS',
                 'MSG_SET_WMM_PARAMS',
                 )
-""" contains all constants used as message type"""
+""" contains all constants used as message type.
+    this enumeration defines the types of message dealt by the ethanol messaging system.
+    notice that the order of the message counts.
+    it has to be the same as in the msg_common.h file in the ethanol_hostapd project.
+"""
 
 # #####################################
 #
@@ -289,11 +292,21 @@ def connect_ssl_socket(server):
 
 
 def is_error_msg(received_msg):
+    """ decodes the header of the message to identify if it is an error message
+
+        @param received_msg: binary message received by the server.
+        @return: true, if it is an error
+    """
     msg = msg_default.parse(received_msg)
     return msg.m_type == MSG_TYPE.MSG_ERR_TYPE
 
 
 def get_error_msg(received_msg):
+    """
+        @param received_msg: the binary message received by the server
+        @return: return None if received_msg is not an error message,
+                 otherwise returns the parsed message (the error message)
+    """
     if not is_error_msg(received_msg):
         return None
     from msg_error import msg_error
@@ -318,9 +331,9 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
     if ssl_sock == -1:
         # error
         return True, None
-        
+
     msg = builder(msg_struct)
-    num_bytes = ssl_sock.write(msg)
+    ssl_sock.write(msg)  # return number of bytes
     if only_send:
         ssl_sock.close()
         sckt.close()
@@ -329,8 +342,6 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
         return
 
     received_msg = ssl_sock.read(BUFFER_SIZE)
-
-    # print hexadecimal(received_msg)  # AQUI <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< REMOVER
     ssl_sock.close()
     sckt.close()
     if received_msg != '':
@@ -346,8 +357,19 @@ def send_and_receive_msg(server, msg_struct, builder, parser, only_send=False):
 
 
 def len_of_string(v):
+    """
+        @param v: the string
+        @return: the length of a string, if "v" is None returns zero
+    """
     return 0 if not isinstance(v, str) else len(v)
 
 
-def return_from_dict(d, v, error):
-    return d[v] if v in d else error
+def return_from_dict(d, k, error):
+    """ TODO: remove this call from the system,
+              changing it to the dict.get() command as shown below
+
+        @param d: a dictionary
+        @param k: a key
+        @param error: an error if the key does not exists
+    """
+    return d.get(k, error)  # return error is k is not in d
