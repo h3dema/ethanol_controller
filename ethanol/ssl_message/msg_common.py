@@ -193,8 +193,8 @@ MSG_TYPE = Enum('MSG_HELLO_TYPE',
 
 SERVER_ADDR = "0.0.0.0"
 """ this is the default address our server is going to bind
-    for tests, connect only to the loopback interface
     if you want to connect to all available interfaces, use "0.0.0.0"
+    if you want to connect to a specific interface, change the server_address parameter in run_server()
 """
 
 SERVER_PORT = 22222
