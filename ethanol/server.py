@@ -24,6 +24,12 @@ from pox.core import core
 
 def run_server(server_address=SERVER_ADDR, server_port=SERVER_PORT):
     """ creates an Ethanol server at SERVER_PORT and activates it
+        @param server_address: bind the server to an interface. 
+                               if this parameters is '0.0.0.0', then binds to all interfaces.
+                               if you want an specific interface you can inform it here, e.g., server_address='localhost'.
+        @type server_address: str
+        @param server_port: server port to bind this python server
+        @type server_port: int
     """
     server = (server_address, server_port)  # socket provided by the server
     log.info("Listening @ %s:%i" % server)
