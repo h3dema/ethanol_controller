@@ -106,11 +106,11 @@ def process_hello(received_msg, fromaddr):
 
     log.debug("Hello msg received.")
     if msg['device_type'] == 1:
-        # create ap object
-        log.debug("\tConnect to AP @ %s:%d" % client_socket)
-        ap = add_ap(client_socket)  # returns ap
-        log.debug("AP added to the list: %s" % ap)
-        log.debug("List of connected APs: %s", connected_aps())
+        # Creates and returns ap object if it doesn't already exist
+        ap = add_ap(client_socket)
+        if ap is not None:
+            log.debug("\tConnected to AP @ %s:%d" % client_socket)
+            log.debug("List of connected APs: %s", connected_aps().keys())
     elif msg['device_type'] == 2:
         log.info("Connect to STA @ %s:%d" % client_socket)
         station = add_station(client_socket)
