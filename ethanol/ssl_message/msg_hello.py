@@ -104,7 +104,8 @@ def process_hello(received_msg, fromaddr):
     client_port = msg['tcp_port']
     client_socket = (fromaddr[0], client_port)
 
-    log.debug("Hello msg received.")
+    events_hello.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
+    
     if msg['device_type'] == 1:
         # Creates and returns ap object if it doesn't already exist
         ap = add_ap(client_socket)
@@ -115,8 +116,6 @@ def process_hello(received_msg, fromaddr):
         log.info("Connect to STA @ %s:%d" % client_socket)
         station = add_station(client_socket)
         log.debug("Station %s" % station)
-
-    events_hello.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
 
     # only send back the same message
     return received_msg
