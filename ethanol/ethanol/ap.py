@@ -141,9 +141,10 @@ def add_ap(client_address):
         __list_of_aps[ip] = AP(ip, port)
         log.info("Adding AP with IP %s to the list of connected aps (size %d)"
                  % (ip, len(__list_of_aps)))
+        return __list_of_aps[ip]
     else:
         log.debug('AP %s exists' % ip)
-        pass
+        return None # returns None if no new AP object was created
 
 
 def remove_ap_byIP(ip):

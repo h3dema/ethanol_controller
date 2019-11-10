@@ -28,7 +28,7 @@ from pox.ethanol.ssl_message.msg_common import hexadecimal
 from pox.ethanol.ssl_message.msg_common import connect_ssl_socket, len_of_string
 from pox.ethanol.ssl_message.msg_log import log
 
-from pox.ethanol.ethanol.ap import add_ap
+from pox.ethanol.ethanol.ap import add_ap, connected_aps
 from pox.ethanol.ethanol.station import add_station
 
 from pox.ethanol.events import Events
@@ -109,7 +109,8 @@ def process_hello(received_msg, fromaddr):
         # create ap object
         log.debug("\tConnect to AP @ %s:%d" % client_socket)
         ap = add_ap(client_socket)  # returns ap
-        log.debug("AP %s" % ap)
+        log.debug("AP added to the list: %s" % ap)
+        log.debug("List of connected APs: %s", connected_aps())
     elif msg['device_type'] == 2:
         log.info("Connect to STA @ %s:%d" % client_socket)
         station = add_station(client_socket)
