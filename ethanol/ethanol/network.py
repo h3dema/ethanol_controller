@@ -103,7 +103,7 @@ class Network(object):
           create a network with ESSID = ssid
         """
         if ssid in list_of_networks():
-            log.debug('ssid %s already exists')
+            log.debug('ssid %s already exists', ssid)
             raise ValueError("SSID %s already exists!" % ssid)
 
         self.__id = uuid4()  # random UUID
