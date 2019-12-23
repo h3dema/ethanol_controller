@@ -176,7 +176,8 @@ class AP(object):
         """
         # import placed here to avoid 'import loop'
         from pox.ethanol.ethanol.radio import Radio
-        from pox.ethanol.ethanol.network import Network, add_network
+        from pox.ethanol.ethanol.network import Network
+        from pox.ethanol.ethanol.network import add_network, get_or_create_network_by_ssid
 
         self.__id = uuid.uuid4()  #
         # client_address tuple
@@ -220,11 +221,14 @@ class AP(object):
                 if ssid is None or ssid.ssid is None:
                     log.info("Detected a invalid SSID!!!")
                 else:
-                    net = Network(ssid.ssid)
-                    if add_network(ssid.ssid, net):
+                    try:
+                        net = Network(ssid.ssid)  # create the object. This init also inserts the ssid to a control list
                         log.info('[%s] added to network (SSID) list', ssid.ssid)
-                    else:
+                    except ValueError:
+                        # exception if network exists
                         log.debug('Network SSID %s already exists', ssid.ssid)
+                        net = get_or_create_network_by_ssid(ssid.ssid)  # retrieve the network
+                    
             log.info('Creating and association the VAP objects')
             #
             # retrieve configured vaps
