@@ -102,9 +102,9 @@ class Network(object):
         """
           create a network with ESSID = ssid
         """
-        if ssid in list_of_networks():
-            log.debug('ssid %s already exists')
-            raise ValueError("SSID %s already exists!" % ssid)
+        #if ssid in list_of_networks():
+        #    log.debug('ssid %s already exists', ssid)
+        #    raise ValueError("SSID %s already exists!" % ssid)
 
         self.__id = uuid4()  # random UUID
 
@@ -112,8 +112,8 @@ class Network(object):
         self.__listVAP = []
         self.__msg_id = 0  # message id used to identify the msg to the device
         log.info('SSID: %s', self.__SSID)
-        add_network(self.__SSID, self)
-        log.info('constructor Network %s ended', self.__SSID)
+        #add_network(self.__SSID, self)
+        log.info('Constructor Network %s ended', self.__SSID)
 
     def __del__(self):
         """

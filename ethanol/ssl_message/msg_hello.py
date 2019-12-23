@@ -28,7 +28,7 @@ from pox.ethanol.ssl_message.msg_common import hexadecimal
 from pox.ethanol.ssl_message.msg_common import connect_ssl_socket, len_of_string
 from pox.ethanol.ssl_message.msg_log import log
 
-from pox.ethanol.ethanol.ap import add_ap
+from pox.ethanol.ethanol.ap import add_ap, connected_aps
 from pox.ethanol.ethanol.station import add_station
 
 from pox.ethanol.events import Events
@@ -104,18 +104,18 @@ def process_hello(received_msg, fromaddr):
     client_port = msg['tcp_port']
     client_socket = (fromaddr[0], client_port)
 
-    log.debug("Hello msg received.")
+    events_hello.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
+    
     if msg['device_type'] == 1:
-        # create ap object
-        log.debug("\tConnect to AP @ %s:%d" % client_socket)
-        ap = add_ap(client_socket)  # returns ap
-        log.debug("AP %s" % ap)
+        # Creates and returns ap object if it doesn't already exist
+        ap = add_ap(client_socket)
+        if ap is not None:
+            log.debug("\tConnected to AP @ %s:%d" % client_socket)
+            log.debug("List of connected APs: %s", connected_aps().keys())
     elif msg['device_type'] == 2:
         log.info("Connect to STA @ %s:%d" % client_socket)
         station = add_station(client_socket)
         log.debug("Station %s" % station)
-
-    events_hello.on_change(msg=msg, fromaddr=fromaddr)  # call all registered functions
 
     # only send back the same message
     return received_msg

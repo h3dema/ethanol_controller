@@ -55,7 +55,7 @@ def is_802_11e_enabled(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME, sta_ip=Non
       @return: msg - received message
     """
     return __get_enabled(server=server, id=id,
-                         sta_ip=sta_ip, sta_port=sta_port, m_type=MSG_TYPE.MSG_GET_802_11E_ENABLED)
+                         sta_ip=sta_ip, sta_port=sta_port, intf_name=intf_name, m_type=MSG_TYPE.MSG_GET_802_11E_ENABLED)
 
 
 def is_fastbsstransition_compatible(server, id=0, intf_name=DEFAULT_WIFI_INTFNAME, sta_ip=None, sta_port=0):
@@ -92,8 +92,8 @@ def __get_enabled(server, id=0, intf_name=None, sta_ip=None, sta_port=0, m_type=
 
       @return: msg - received message
     """
-    if intf_name is None or m_type in [MSG_TYPE.MSG_GET_802_11E_ENABLED,
-                                       MSG_TYPE.MSG_GET_FASTBSSTRANSITION_COMPATIBLE]:
+    if intf_name is None or m_type not in [MSG_TYPE.MSG_GET_802_11E_ENABLED,
+                                           MSG_TYPE.MSG_GET_FASTBSSTRANSITION_COMPATIBLE]:
         return None, None
 
     """
