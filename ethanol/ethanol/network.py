@@ -95,25 +95,31 @@ def get_or_create_network_by_ssid(ssid):
 
 class Network(object):
     """
-    handle a network - a network is a set of VAPs that share the same SSID
+        handle a network - a network is a set of VAPs that share the same SSID
     """
 
     def __init__(self, ssid):
         """
-          create a network with ESSID = ssid
+            create a network with ESSID = ssid
+            add the ssid to the list __list_of_networks, if does not exist
+            if exists triggers an error
         """
-        #if ssid in list_of_networks():
-        #    log.debug('ssid %s already exists', ssid)
-        #    raise ValueError("SSID %s already exists!" % ssid)
+        if ssid in list_of_networks():
+            # don't allow to create two networks with the same SSID
+            log.debug('ssid %s already exists', ssid)
+            raise ValueError("SSID %s already exists!" % ssid)
+        else:
+            # create the network
+            self.__id = uuid4()  # random UUID
+            # set the name of the SSID
+            self.__SSID = ssid
+            self.__listVAP = []
+            self.__msg_id = 0  # message id used to identify the msg to the device
+            # if the Netword does not exists, insert it in the list
+            add_network(ssid, self)
 
-        self.__id = uuid4()  # random UUID
-
-        self.__SSID = ssid
-        self.__listVAP = []
-        self.__msg_id = 0  # message id used to identify the msg to the device
-        log.info('SSID: %s', self.__SSID)
-        #add_network(self.__SSID, self)
-        log.info('Constructor Network %s ended', self.__SSID)
+            log.info('SSID: %s', self.__SSID)
+            log.info('Constructor Network %s ended', self.__SSID)
 
     def __del__(self):
         """
